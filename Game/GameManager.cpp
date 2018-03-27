@@ -119,8 +119,6 @@ void GameManager::Run()
 
 	Player* player = new Player(&mPlayerTexture, 1, camera);
 	player->SetPosition(Vector2(20, 1));
-	// TODO: ASK WHY ISACTIVE IS SET TO FALSE BY DEFAULT
-	player->SetActive(true);
 
 	Bullet* bullet = new Bullet(&mBulletTexture);
 	bullet->SetActive(false);
@@ -146,7 +144,19 @@ void GameManager::Run()
 			{
 				quit = true;
 			}
+			if (e.type == SDL_MOUSEBUTTONDOWN) {
+				int mouseX;
+				int mouseY;
+				SDL_GetMouseState(&mouseX, &mouseY);
+				Vector2 mousePos(mouseX, mouseY);
+				Vector2 shootDirection(mousePos - player->GetPosition());
+				shootDirection.Normalize();
+				bullet->SetActive(true);
+				bullet->Shoot(player->GetPosition(), shootDirection);
+			}
 		}
+
+
 
 		Vector2 dir(0, 0);
 		player->Move(dir);
@@ -168,17 +178,12 @@ void GameManager::Run()
 		{
 			dir += Vector2(1, 0);
 		}
-		else if (currentKeyStates[SDL_SCANCODE_SPACE])
-		{
-			bullet->SetActive(true);
-			bullet->Shoot(player->GetPosition(), Vector2(0.1f, 0));
-		}
 
 		player->Move(dir);
 
 		//Center the camera over the dot
-		camera.x = (player->GetPosition().X() + playerWidth / 2) - SCREEN_WIDTH / 2;
-		camera.y = (player->GetPosition().Y() + playerHeight / 2) - SCREEN_HEIGHT / 2;
+		camera.x = (player->GetPosition().x + playerWidth / 2) - SCREEN_WIDTH / 2;
+		camera.y = (player->GetPosition().y + playerHeight / 2) - SCREEN_HEIGHT / 2;
 
 		//Keep the camera in bounds
 		if (camera.x < 0)

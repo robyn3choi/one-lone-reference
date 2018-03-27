@@ -19,7 +19,7 @@ void GameObject::Update(Uint32 deltaTime)
 	}
 
 	mPosition += mVelocity * deltaTime;
-	mTexture->Render(mPosition.X(), mPosition.Y());
+	mTexture->Render(mPosition.x, mPosition.y);
 }
 
 void GameObject::SetActive(bool active)

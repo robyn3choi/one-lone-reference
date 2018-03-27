@@ -24,5 +24,5 @@ void Bullet::Update(Uint32 deltaTime)
 	}
 
 	mPosition += mVelocity * deltaTime;
-	mTexture->Render(mPosition.X(), mPosition.Y());
+	mTexture->Render(mPosition.x, mPosition.y);
 }

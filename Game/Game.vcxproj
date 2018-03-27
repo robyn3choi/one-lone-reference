@@ -119,7 +119,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Externals\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>..\_Build\$(PlatformShortName)\$(Configuration)\$(ProjectName)$(TargetExt)</OutputFile>
     </Link>
     <PostBuildEvent>
@@ -168,7 +168,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)Externals\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>..\_Build\$(PlatformShortName)\$(Configuration)\$(ProjectName)$(TargetExt)</OutputFile>
     </Link>
     <PostBuildEvent>

@@ -20,7 +20,7 @@ void Player::Update(Uint32 deltaTime)
 	}
 
 	mPosition += mVelocity * deltaTime;
-	mTexture->Render(mPosition.X() - mCamera.x, mPosition.Y() - mCamera.y);
+	mTexture->Render(mPosition.x - mCamera.x, mPosition.y - mCamera.y);
 }
 
 void Player::Move(Vector2 dir)

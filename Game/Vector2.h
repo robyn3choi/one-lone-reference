@@ -6,14 +6,13 @@ public:
 	Vector2(float x, float y);
 	~Vector2();
 
-	float X() const { return mX; }
-	float Y() const { return mY; }
+	float x;
+	float y;
+
+	float GetLength() const;
+	void Normalize();
 	void operator+=(const Vector2& rhs);
 	void operator-=(const Vector2& rhs);
-
-private:
-	float mX = 0;
-	float mY = 0;
 };
 
 Vector2 operator+(const Vector2& lhs, const Vector2& rhs);
