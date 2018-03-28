@@ -5,7 +5,7 @@
 class Player : public GameObject
 {
 public:
-	Player(Texture* texture, float speed, SDL_Rect& mCamera);
+	Player(Texture* texture, SDL_Rect& camera, SDL_Rect& collider, float speed);
 	~Player();
 
 	void Update(Uint32 deltaTime) override;
@@ -13,6 +13,5 @@ public:
 
 private:
 	float mSpeed;
-	SDL_Rect& mCamera;
 };
 

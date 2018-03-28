@@ -1,9 +1,8 @@
 #include "Player.h"
 
-Player::Player(Texture* texture, float speed, SDL_Rect& camera) :
-	GameObject(texture),
-	mSpeed(speed),
-	mCamera(camera)
+Player::Player(Texture* texture, SDL_Rect& camera, SDL_Rect& collider, float speed) :
+	GameObject(texture, camera, collider),
+	mSpeed(speed)
 {
 }
 
@@ -20,6 +19,8 @@ void Player::Update(Uint32 deltaTime)
 	}
 
 	mPosition += mVelocity * deltaTime;
+	mCollider.x = mPosition.x;
+	mCollider.y = mPosition.y;
 	mTexture->Render(mPosition.x - mCamera.x, mPosition.y - mCamera.y);
 }
 

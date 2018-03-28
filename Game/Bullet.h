@@ -5,7 +5,7 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(Texture* texture);
+	Bullet(Texture* texture, SDL_Rect& camera, SDL_Rect& collider);
 	~Bullet();
 
 	void Update(Uint32 deltaTime) override;

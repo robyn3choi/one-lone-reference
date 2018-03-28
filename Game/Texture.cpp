@@ -4,8 +4,8 @@
 
 
 
-Texture::Texture(SDL_Renderer*& renderer)
-	: mRenderer(renderer)
+Texture::Texture(SDL_Renderer*& renderer) :
+	mRenderer(renderer)
 {
 }
 

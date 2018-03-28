@@ -1,7 +1,7 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Texture* texture)
-	: GameObject(texture)
+Bullet::Bullet(Texture* texture, SDL_Rect& camera, SDL_Rect& collider)
+	: GameObject(texture, camera, collider)
 {
 }
 
@@ -24,5 +24,7 @@ void Bullet::Update(Uint32 deltaTime)
 	}
 
 	mPosition += mVelocity * deltaTime;
-	mTexture->Render(mPosition.x, mPosition.y);
+	mCollider.x = mPosition.x;
+	mCollider.y = mPosition.y;
+	mTexture->Render(mPosition.x - mCamera.x, mPosition.y - mCamera.y);
 }

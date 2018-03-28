@@ -22,6 +22,7 @@ private:
 	const int LEVEL_HEIGHT = 2000;
 	SDL_Window* mWindow = nullptr;
 	SDL_Renderer* mRenderer = nullptr;
+	SDL_Rect mCamera;
 	Texture mPlayerTexture;
 	Texture mBulletTexture;
 	Texture mBackgroundTexture;

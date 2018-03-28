@@ -32,7 +32,6 @@ public:
 
 private:
 	SDL_Renderer*& mRenderer;
-	//The actual hardware texture
 	SDL_Texture* mTexture = NULL;
 
 	//Image dimensions

@@ -58,7 +58,6 @@ bool GameManager::Initialize()
 			}
 		}
 	}
-
 	return success;
 }
 
@@ -115,16 +114,23 @@ void GameManager::Run()
 	//Event handler
 	SDL_Event e;
 
-	SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-
-	Player* player = new Player(&mPlayerTexture, 1, camera);
+	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	SDL_Rect playerCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
+	Player* player = new Player(&mPlayerTexture, mCamera, playerCollider, 1);
 	player->SetPosition(Vector2(20, 1));
 
-	Bullet* bullet = new Bullet(&mBulletTexture);
+	SDL_Rect bulletCollider = { 0, 0, mBulletTexture.GetWidth(), mBulletTexture.GetHeight() };
+	Bullet* bullet = new Bullet(&mBulletTexture, mCamera, bulletCollider);
 	bullet->SetActive(false);
+
+	// enemy for now
+	SDL_Rect enemyCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
+	GameObject* enemy = new GameObject(&mPlayerTexture, mCamera, enemyCollider);
+	enemy->SetPosition(Vector2(300, 1));
 
 	mGameObjects.push_back(player);
 	mGameObjects.push_back(bullet);
+	mGameObjects.push_back(enemy);
 	int playerWidth = player->GetWidth();
 	int playerHeight = player->GetHeight();
 
@@ -182,25 +188,25 @@ void GameManager::Run()
 		player->Move(dir);
 
 		//Center the camera over the dot
-		camera.x = (player->GetPosition().x + playerWidth / 2) - SCREEN_WIDTH / 2;
-		camera.y = (player->GetPosition().y + playerHeight / 2) - SCREEN_HEIGHT / 2;
+		mCamera.x = (player->GetPosition().x + playerWidth / 2) - SCREEN_WIDTH / 2;
+		mCamera.y = (player->GetPosition().y + playerHeight / 2) - SCREEN_HEIGHT / 2;
 
 		//Keep the camera in bounds
-		if (camera.x < 0)
+		if (mCamera.x < 0)
 		{
-			camera.x = 0;
+			mCamera.x = 0;
 		}
-		if (camera.y < 0)
+		if (mCamera.y < 0)
 		{
-			camera.y = 0;
+			mCamera.y = 0;
 		}
-		if (camera.x > LEVEL_WIDTH - camera.w)
+		if (mCamera.x > LEVEL_WIDTH - mCamera.w)
 		{
-			camera.x = LEVEL_WIDTH - camera.w;
+			mCamera.x = LEVEL_WIDTH - mCamera.w;
 		}
-		if (camera.y > LEVEL_HEIGHT - camera.h)
+		if (mCamera.y > LEVEL_HEIGHT - mCamera.h)
 		{
-			camera.y = LEVEL_HEIGHT - camera.h;
+			mCamera.y = LEVEL_HEIGHT - mCamera.h;
 		}
 
 		//Clear screen
@@ -208,7 +214,7 @@ void GameManager::Run()
 		SDL_RenderClear(mRenderer);
 
 		//player->Update(deltaTime);
-		mBackgroundTexture.Render(0, 0, &camera);
+		mBackgroundTexture.Render(0, 0, &mCamera);
 
 		for (GameObject* g : mGameObjects)
 		{
