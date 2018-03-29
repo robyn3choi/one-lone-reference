@@ -11,6 +11,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="GameObjectPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled">
@@ -27,5 +28,6 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="GameObjectPool.h" />
   </ItemGroup>
 </Project>

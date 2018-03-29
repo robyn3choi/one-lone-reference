@@ -31,6 +31,11 @@ void GameObject::SetActive(bool active)
 	mIsActive = active;
 }
 
+bool GameObject::IsActive()
+{
+	return mIsActive;
+}
+
 const Vector2& GameObject::GetVelocity() const
 {
 	return mVelocity;

@@ -9,6 +9,7 @@ public:
 
 	virtual void Update(Uint32 deltaTime);
 	void SetActive(bool active);
+	bool IsActive();
 	const Vector2& GetPosition() const;
 	const Vector2& GetVelocity() const;
 	void SetPosition(Vector2& position);

@@ -1,6 +1,7 @@
 #include "GameManager.h"
 #include "Player.h"
 #include "Bullet.h"
+#include "GameObjectPool.h"
 
 
 GameManager::GameManager() :
@@ -115,22 +116,23 @@ void GameManager::Run()
 	SDL_Event e;
 
 	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+
 	SDL_Rect playerCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
 	Player* player = new Player(&mPlayerTexture, mCamera, playerCollider, 1);
 	player->SetPosition(Vector2(20, 1));
 
 	SDL_Rect bulletCollider = { 0, 0, mBulletTexture.GetWidth(), mBulletTexture.GetHeight() };
-	Bullet* bullet = new Bullet(&mBulletTexture, mCamera, bulletCollider);
-	bullet->SetActive(false);
+	GameObject* bullet = new Bullet(&mBulletTexture, mCamera, bulletCollider);
+	GameObjectPool bulletPool(PLAYER_BULLET_POOL_SIZE, bullet);
 
 	// enemy for now
 	SDL_Rect enemyCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
 	GameObject* enemy = new GameObject(&mPlayerTexture, mCamera, enemyCollider);
 	enemy->SetPosition(Vector2(300, 1));
 
-	mGameObjects.push_back(player);
-	mGameObjects.push_back(bullet);
-	mGameObjects.push_back(enemy);
+	mActiveGameObjects.push_back(player);
+	mActiveGameObjects.push_back(enemy);
+
 	int playerWidth = player->GetWidth();
 	int playerHeight = player->GetHeight();
 
@@ -157,7 +159,7 @@ void GameManager::Run()
 				Vector2 mousePos(mouseX, mouseY);
 				Vector2 shootDirection(mousePos - player->GetPosition());
 				shootDirection.Normalize();
-				bullet->SetActive(true);
+				Bullet* bullet = dynamic_cast<Bullet*>(bulletPool.GetGameObject());
 				bullet->Shoot(player->GetPosition(), shootDirection);
 			}
 		}
@@ -209,14 +211,19 @@ void GameManager::Run()
 			mCamera.y = LEVEL_HEIGHT - mCamera.h;
 		}
 
+		if (SDL_HasIntersection(&playerCollider, &enemyCollider))
+		{
+			std::cout << "collided" << std::endl;
+		}
+
 		//Clear screen
 		SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(mRenderer);
 
 		//player->Update(deltaTime);
-		mBackgroundTexture.Render(0, 0, &mCamera);
+		mBackgroundTexture.Render(-mCamera.x, -mCamera.y);
 
-		for (GameObject* g : mGameObjects)
+		for (GameObject* g : mActiveGameObjects)
 		{
 			g->Update(deltaTime);
 		}
