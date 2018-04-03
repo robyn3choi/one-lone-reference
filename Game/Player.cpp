@@ -1,7 +1,7 @@
 #include "Player.h"
 
-Player::Player(Texture* texture, SDL_Rect& camera, SDL_Rect& collider, float speed) :
-	GameObject(texture, camera, collider),
+Player::Player(Texture& texture, SDL_Rect& collider, const float speed) :
+	GameObject(texture collider),
 	mSpeed(speed)
 {
 }

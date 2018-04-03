@@ -1,9 +1,6 @@
 #include "GameObject.h"
 
-GameObject::GameObject(Texture* texture, SDL_Rect& camera, SDL_Rect& collider) :
-	mTexture(texture),
-	mCamera(camera),
-	mCollider(collider)
+GameObject::GameObject(Texture& texture, SDL_Rect& collider)
 {
 }
 
@@ -23,7 +20,11 @@ void GameObject::Update(Uint32 deltaTime)
 	mPosition += mVelocity * deltaTime;
 	mCollider.x = mPosition.x;
 	mCollider.y = mPosition.y;
-	mTexture->Render(mPosition.x - mCamera.x, mPosition.y - mCamera.y);
+}
+
+void GameObject::Render(SDL_Rect & camera)
+{
+	mTexture->Render(mPosition.x - camera.x, mPosition.y - camera.y);
 }
 
 void GameObject::SetActive(bool active)

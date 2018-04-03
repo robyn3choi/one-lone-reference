@@ -1,12 +1,12 @@
 #include "GameManager.h"
 #include "Player.h"
 #include "Bullet.h"
-#include "GameObjectPool.h"
+#include "BulletPool.h"
 
 
 GameManager::GameManager() :
 	mPlayerTexture(mRenderer),
-	mBulletTexture(mRenderer),
+	mPlayerBulletTexture(mRenderer),
 	mBackgroundTexture(mRenderer)
 {
 }
@@ -72,7 +72,7 @@ bool GameManager::LoadMedia()
 		success = false;
 	}
 
-	if (!mBulletTexture.LoadFromFile("Images/cursor.png"))
+	if (!mPlayerBulletTexture.LoadFromFile("Images/cursor.png"))
 	{
 		printf("Failed to load bullet texture!\n");
 		success = false;
@@ -91,7 +91,7 @@ void GameManager::Close()
 {
 	//Free loaded images
 	mPlayerTexture.Free();
-	mBulletTexture.Free();
+	mPlayerBulletTexture.Free();
 	mBackgroundTexture.Free();
 
 	//Destroy window	
@@ -103,6 +103,12 @@ void GameManager::Close()
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
+}
+
+
+void GameManager::CreateGameObjects()
+{
+
 }
 
 void GameManager::Run()
@@ -117,21 +123,21 @@ void GameManager::Run()
 
 	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
+	SDL_Rect playerBulletCollider = { 0, 0, mPlayerBulletTexture.GetWidth(), mPlayerBulletTexture.GetHeight() };
+	BulletPool playerBulletPool(PLAYER_BULLET_POOL_SIZE, &mPlayerBulletTexture, playerBulletCollider, 1, false);
+
+	// enemy for now
+	SDL_Rect enemyCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
+	GameObject* enemy = new GameObject(&mPlayerTexture, enemyCollider);
+	enemy->SetPosition(Vector2(300, 1));
+
+	mActiveGameObjects.push_back(enemy);
+
 	SDL_Rect playerCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
 	Player* player = new Player(&mPlayerTexture, mCamera, playerCollider, 1);
 	player->SetPosition(Vector2(20, 1));
 
-	SDL_Rect bulletCollider = { 0, 0, mBulletTexture.GetWidth(), mBulletTexture.GetHeight() };
-	GameObject* bullet = new Bullet(&mBulletTexture, mCamera, bulletCollider);
-	GameObjectPool bulletPool(PLAYER_BULLET_POOL_SIZE, bullet);
-
-	// enemy for now
-	SDL_Rect enemyCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
-	GameObject* enemy = new GameObject(&mPlayerTexture, mCamera, enemyCollider);
-	enemy->SetPosition(Vector2(300, 1));
-
 	mActiveGameObjects.push_back(player);
-	mActiveGameObjects.push_back(enemy);
 
 	int playerWidth = player->GetWidth();
 	int playerHeight = player->GetHeight();
@@ -159,12 +165,10 @@ void GameManager::Run()
 				Vector2 mousePos(mouseX, mouseY);
 				Vector2 shootDirection(mousePos - player->GetPosition());
 				shootDirection.Normalize();
-				Bullet* bullet = dynamic_cast<Bullet*>(bulletPool.GetGameObject());
-				bullet->Shoot(player->GetPosition(), shootDirection);
+				Bullet& bullet = playerBulletPool.GetBullet();
+				bullet.Shoot(player->GetPosition(), shootDirection);
 			}
 		}
-
-
 
 		Vector2 dir(0, 0);
 		player->Move(dir);

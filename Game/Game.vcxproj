@@ -179,7 +179,8 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="ObjectPool.cpp" />
+    <ClCompile Include="BulletPool.cpp" />
+    <ClCompile Include="Initializer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Precompiled.cpp">
@@ -195,7 +196,9 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="BulletPool.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Initializer.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="Texture.h" />
