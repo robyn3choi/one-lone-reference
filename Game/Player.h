@@ -5,7 +5,7 @@
 class Player : public GameObject
 {
 public:
-	Player(Texture& texture, SDL_Rect& collider, const float speed);
+	Player(TextureType textureType, const float speed);
 	~Player();
 
 	void Update(Uint32 deltaTime) override;

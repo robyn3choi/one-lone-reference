@@ -1,30 +1,22 @@
 #include "GameObject.h"
 
-GameObject::GameObject(Texture& texture, SDL_Rect& collider)
+GameObject::GameObject(TextureType textureType) :
+	mTextureType(textureType)
 {
+	//TODO: CHANGE SO THAT THE COLLIDER IS SMALLER THAN THE TEXTURE
+	int width = TextureManager::GetTexture(mTextureType)->GetWidth();
+	int height = TextureManager::GetTexture(mTextureType)->GetHeight();
+	mCollider = { 0, 0, width, height };
 }
 
 
 GameObject::~GameObject()
 {
-	mTexture = nullptr;
-}
-
-void GameObject::Update(Uint32 deltaTime)
-{
-	if (!mIsActive)
-	{
-		return;
-	}
-
-	mPosition += mVelocity * deltaTime;
-	mCollider.x = mPosition.x;
-	mCollider.y = mPosition.y;
 }
 
 void GameObject::Render(SDL_Rect & camera)
 {
-	mTexture->Render(mPosition.x - camera.x, mPosition.y - camera.y);
+	TextureManager::GetTexture(mTextureType)->Render(mPosition.x - camera.x, mPosition.y - camera.y);
 }
 
 void GameObject::SetActive(bool active)
@@ -59,12 +51,7 @@ void GameObject::SetVelocity(Vector2& velocity)
 	mVelocity = velocity;
 }
 
-int GameObject::GetWidth() const
+const SDL_Rect GameObject::GetCollider() const
 {
-	return mTexture->GetWidth();
-}
-
-int GameObject::GetHeight() const
-{
-	return mTexture->GetHeight();
+	return mCollider;
 }

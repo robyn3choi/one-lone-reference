@@ -12,7 +12,8 @@
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="BulletPool.cpp" />
-    <ClCompile Include="Initializer.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled">
@@ -31,6 +32,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Globals.h" />
-    <ClInclude Include="Initializer.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Enemy.h" />
   </ItemGroup>
 </Project>

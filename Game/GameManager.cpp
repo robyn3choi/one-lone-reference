@@ -1,13 +1,9 @@
 #include "GameManager.h"
-#include "Player.h"
 #include "Bullet.h"
 #include "BulletPool.h"
 
 
-GameManager::GameManager() :
-	mPlayerTexture(mRenderer),
-	mPlayerBulletTexture(mRenderer),
-	mBackgroundTexture(mRenderer)
+GameManager::GameManager()
 {
 }
 
@@ -18,81 +14,81 @@ GameManager::~GameManager()
 
 bool GameManager::Initialize()
 {
-	bool success = true;
-
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		success = false;
+		return false;
 	}
-	else
-	{
-		//Create window
-		mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-		if (mWindow == NULL)
-		{
-			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-			success = false;
-		}
-		else
-		{
-			//Create renderer for window
-			mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
-			if (mRenderer == NULL)
-			{
-				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-				success = false;
-			}
-			else
-			{
-				//Initialize renderer color
-				SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-				//Initialize PNG loading
-				int imgFlags = IMG_INIT_PNG;
-				if (!(IMG_Init(imgFlags) & imgFlags))
-				{
-					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-					success = false;
-				}
-			}
-		}
+	//Create window
+	mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	if (mWindow == NULL)
+	{
+		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+		return false;
 	}
-	return success;
+
+	//Create renderer for window
+	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+	if (mRenderer == NULL)
+	{
+		printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+		return false;
+	}
+
+	//Initialize renderer color
+	SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+	//Initialize PNG loading
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags))
+	{
+		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+		return false;
+	}
+
+	mTextureManager = new TextureManager(mRenderer);
+	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+	return true;
 }
 
-bool GameManager::LoadMedia()
+void GameManager::CreateGameObjects()
 {
-	bool success = true;
+	mPlayer = new Player(TextureType::Player, PLAYER_SPEED);
 
-	if (!mPlayerTexture.LoadFromFile("Images/testImage.png"))
+	for (int i = 0; i < NUM_ENEMIES; i++)
 	{
-		printf("Failed to load player texture!\n");
-		success = false;
+		mEnemies.push_back(new Enemy(TextureType::Enemy));
 	}
 
-	if (!mPlayerBulletTexture.LoadFromFile("Images/cursor.png"))
-	{
-		printf("Failed to load bullet texture!\n");
-		success = false;
-	}
+	mPlayerBulletPool = new BulletPool(PLAYER_BULLET_POOL_SIZE, TextureType::PlayerBullet, PLAYER_BULLET_SPEED, false);
+	mEnemyBulletPool = new BulletPool(ENEMY_BULLET_POOL_SIZE,  TextureType::EnemyBullet, ENEMY_BULLET_SPEED, true);
 
-	if (!mBackgroundTexture.LoadFromFile("Images/bg.png"))
-	{
-		printf("Failed to load background texture!\n");
-		success = false;
-	}
+	mGameObjects.push_back(mPlayer);
+	mGameObjects.insert(mGameObjects.end(), mEnemies.begin(), mEnemies.end());
 
-	return success;
+	auto pBulletPool = mPlayerBulletPool->GetPool();
+	mGameObjects.insert(mGameObjects.end(), pBulletPool.begin(), pBulletPool.end());
+
+	auto eBulletPool = mEnemyBulletPool->GetPool();
+	mGameObjects.insert(mGameObjects.end(), eBulletPool.begin(), eBulletPool.end());
 }
+
 
 void GameManager::Close()
 {
-	//Free loaded images
-	mPlayerTexture.Free();
-	mPlayerBulletTexture.Free();
-	mBackgroundTexture.Free();
+	delete mTextureManager;
+	mTextureManager = nullptr;
+	delete mPlayer;
+	mPlayer = nullptr;
+	delete mPlayerBulletPool;
+	mPlayerBulletPool = nullptr;
+	delete mEnemyBulletPool;
+	mEnemyBulletPool = nullptr;
+	delete mTextureManager;
+	mTextureManager = nullptr;
 
 	//Destroy window	
 	SDL_DestroyRenderer(mRenderer);
@@ -105,12 +101,6 @@ void GameManager::Close()
 	SDL_Quit();
 }
 
-
-void GameManager::CreateGameObjects()
-{
-
-}
-
 void GameManager::Run()
 {
 	Uint32 last = 0;
@@ -121,26 +111,14 @@ void GameManager::Run()
 	//Event handler
 	SDL_Event e;
 
-	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	mPlayer->SetPosition(Vector2(20, 1));
 
-	SDL_Rect playerBulletCollider = { 0, 0, mPlayerBulletTexture.GetWidth(), mPlayerBulletTexture.GetHeight() };
-	BulletPool playerBulletPool(PLAYER_BULLET_POOL_SIZE, &mPlayerBulletTexture, playerBulletCollider, 1, false);
+	mEnemies[0]->SetPosition(Vector2(300, 1));
+	mEnemies[1]->SetPosition(Vector2(400, 1));
+	mEnemies[2]->SetPosition(Vector2(400, 1));
 
-	// enemy for now
-	SDL_Rect enemyCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
-	GameObject* enemy = new GameObject(&mPlayerTexture, enemyCollider);
-	enemy->SetPosition(Vector2(300, 1));
-
-	mActiveGameObjects.push_back(enemy);
-
-	SDL_Rect playerCollider = { 0, 0, mPlayerTexture.GetWidth(), mPlayerTexture.GetHeight() };
-	Player* player = new Player(&mPlayerTexture, mCamera, playerCollider, 1);
-	player->SetPosition(Vector2(20, 1));
-
-	mActiveGameObjects.push_back(player);
-
-	int playerWidth = player->GetWidth();
-	int playerHeight = player->GetHeight();
+	float playerWidth = TextureManager::GetTexture(TextureType::Player)->GetWidth();
+	float playerHeight = TextureManager::GetTexture(TextureType::Player)->GetHeight();
 
 	//While application is running
 	while (!quit)
@@ -163,15 +141,15 @@ void GameManager::Run()
 				int mouseY;
 				SDL_GetMouseState(&mouseX, &mouseY);
 				Vector2 mousePos(mouseX, mouseY);
-				Vector2 shootDirection(mousePos - player->GetPosition());
+				Vector2 shootDirection(mousePos - mPlayer->GetPosition());
 				shootDirection.Normalize();
-				Bullet& bullet = playerBulletPool.GetBullet();
-				bullet.Shoot(player->GetPosition(), shootDirection);
+				Bullet* bullet = mPlayerBulletPool->GetBullet();
+				bullet->Shoot(mPlayer->GetPosition(), shootDirection);
 			}
 		}
 
 		Vector2 dir(0, 0);
-		player->Move(dir);
+		mPlayer->Move(dir);
 
 		const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
 		if (currentKeyStates[SDL_SCANCODE_W])
@@ -191,11 +169,11 @@ void GameManager::Run()
 			dir += Vector2(1, 0);
 		}
 
-		player->Move(dir);
+		mPlayer->Move(dir);
 
 		//Center the camera over the dot
-		mCamera.x = (player->GetPosition().x + playerWidth / 2) - SCREEN_WIDTH / 2;
-		mCamera.y = (player->GetPosition().y + playerHeight / 2) - SCREEN_HEIGHT / 2;
+		mCamera.x = (mPlayer->GetPosition().x + playerWidth / 2) - SCREEN_WIDTH / 2;
+		mCamera.y = (mPlayer->GetPosition().y + playerHeight / 2) - SCREEN_HEIGHT / 2;
 
 		//Keep the camera in bounds
 		if (mCamera.x < 0)
@@ -215,22 +193,60 @@ void GameManager::Run()
 			mCamera.y = LEVEL_HEIGHT - mCamera.h;
 		}
 
-		if (SDL_HasIntersection(&playerCollider, &enemyCollider))
+		if (SDL_HasIntersection(&mPlayer->GetCollider(), &mEnemies[0]->GetCollider()))
 		{
 			std::cout << "collided" << std::endl;
+		}
+
+		// check if player has been hit by enemy bullets
+		for (Bullet* const &bullet : mEnemyBulletPool->GetPool())
+		{
+			if (!bullet->IsActive())
+			{
+				continue;
+			}
+			if (SDL_HasIntersection(&mPlayer->GetCollider(), &bullet->GetCollider()))
+			{
+				// TODO: damage player
+				mEnemyBulletPool->ReturnBullet(bullet);
+				std::cout << "player damaged" << std::endl;
+			}
+		}
+
+		// check if enemies have been hit by player bullets
+		for (Bullet* const &bullet : mPlayerBulletPool->GetPool())
+		{
+			for (Enemy*& enemy : mEnemies)
+			{
+				if (!bullet->IsActive())
+				{
+					continue;
+				}
+				if (SDL_HasIntersection(&enemy->GetCollider(), &bullet->GetCollider()))
+				{
+					// TODO: damage enemy
+					mPlayerBulletPool->ReturnBullet(bullet);
+					std::cout << "enemy damaged" << std::endl;
+				}
+			}
 		}
 
 		//Clear screen
 		SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(mRenderer);
 
-		//player->Update(deltaTime);
-		mBackgroundTexture.Render(-mCamera.x, -mCamera.y);
+		// render background
+		TextureManager::GetTexture(TextureType::Background)->Render(-mCamera.x, -mCamera.y);
 
-		for (GameObject* g : mActiveGameObjects)
+		for (GameObject*& g : mGameObjects)
 		{
-			g->Update(deltaTime);
+			if (g->IsActive())
+			{
+				g->Update(deltaTime);
+				g->Render(mCamera);
+			}
 		}
+
 
 		//Update screen
 		SDL_RenderPresent(mRenderer);

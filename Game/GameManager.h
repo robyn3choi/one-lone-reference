@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
 #include "GameObject.h"
+#include "BulletPool.h"
+#include "Enemy.h"
+#include "Player.h"
 
 class GameManager
 {
@@ -9,18 +12,21 @@ public:
 	~GameManager();
 
 	bool Initialize();
-	bool LoadMedia();
-	void Close();
 	void CreateGameObjects();
+
+	void Close();
 	void Run();
 
 private:
-	SDL_Window* mWindow = nullptr;
-	SDL_Renderer* mRenderer = nullptr;
+	SDL_Window* mWindow;
+	SDL_Renderer* mRenderer;
+	TextureManager* mTextureManager;
 	SDL_Rect mCamera;
-	Texture mPlayerTexture;
-	Texture mPlayerBulletTexture;
-	Texture mBackgroundTexture;
-	std::vector<GameObject*> mActiveGameObjects;
+	std::vector<GameObject*> mGameObjects;
+
+	Player* mPlayer;
+	std::vector<Enemy*> mEnemies;
+	BulletPool* mPlayerBulletPool;
+	BulletPool* mEnemyBulletPool;
 };
 

@@ -4,25 +4,24 @@
 class GameObject
 {
 public:
-	GameObject(Texture& texture, SDL_Rect& collider);
+	GameObject(TextureType textureType);
 	virtual ~GameObject();
 
-	virtual void Update(Uint32 deltaTime);
-	void Render(SDL_Rect& mCamera);
+	virtual void Update(Uint32 deltaTime) = 0;
+	void Render(SDL_Rect& camera);
 	void SetActive(bool active);
 	bool IsActive();
 	const Vector2& GetPosition() const;
 	const Vector2& GetVelocity() const;
 	void SetPosition(Vector2& position);
 	void SetVelocity(Vector2& velocity);
-	int GetWidth() const;
-	int GetHeight() const;
+	const SDL_Rect GetCollider() const;
 
 protected:
-	Texture* mTexture = nullptr;
-	SDL_Rect& mCollider;
+	SDL_Rect mCollider;
 	Vector2 mPosition;
 	Vector2 mVelocity;
 	bool mIsActive = true;
+	TextureType mTextureType;
 };
 

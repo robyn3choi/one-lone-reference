@@ -5,13 +5,14 @@
 class BulletPool
 {
 public:
-	BulletPool(const int size, Texture* texture, SDL_Rect& collider, const float speed, bool hurtsPlayer);
+	BulletPool(const int size, TextureType textureType, const float speed, bool hurtsPlayer);
 	~BulletPool();
 
-	Bullet& GetBullet();
-	void ReturnBullet(Bullet& bullet);
+	Bullet* GetBullet();
+	void ReturnBullet(Bullet* bullet);
+	const std::vector<Bullet*>& GetPool() const;
 
 private:
-	std::vector<Bullet> mPool;
+	std::vector<Bullet*> mPool;
 };
 

@@ -5,7 +5,7 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet(Texture& texture, SDL_Rect& collider, float speed, bool hurtsPlayer);
+	Bullet(TextureType textureType, const float speed, bool hurtsPlayer);
 	~Bullet();
 
 	void Update(Uint32 deltaTime) override;
@@ -13,7 +13,7 @@ public:
 
 private:
 	Vector2 mVelocity;
-	float mSpeed;
+	const float mSpeed;
 	bool mHurtsPlayer;
 };
 

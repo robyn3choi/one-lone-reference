@@ -8,3 +8,4 @@
 #include "SDL_image.h"
 #include "SDL.h"
 #include "Globals.h"
+#include "TextureManager.h"
