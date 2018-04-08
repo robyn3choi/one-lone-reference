@@ -7,7 +7,7 @@ public:
 	GameObject(TextureType textureType);
 	virtual ~GameObject();
 
-	virtual void Update(Uint32 deltaTime) = 0;
+	virtual void Update(float deltaTime) = 0;
 	void Render(SDL_Rect& camera);
 	void SetActive(bool active);
 	bool IsActive();

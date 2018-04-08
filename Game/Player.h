@@ -5,13 +5,19 @@
 class Player : public GameObject
 {
 public:
-	Player(TextureType textureType, const float speed);
+	Player(TextureType textureType);
 	~Player();
 
-	void Update(Uint32 deltaTime) override;
+	void Update(float deltaTime) override;
 	void Move(Vector2 dir);
+	void TakeDamage();
+	void Dash(Vector2 dir);
+	bool IsDashing();
 
 private:
-	float mSpeed;
+	float mSpeed = PLAYER_SPEED;
+	float mHealth = PLAYER_HEALTH;
+	bool mIsDashing = false;
+	float mDashTimer = DASH_TIME;
 };
 

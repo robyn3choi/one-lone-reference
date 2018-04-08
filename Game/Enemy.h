@@ -7,6 +7,11 @@ public:
 	Enemy(TextureType textureType);
 	~Enemy();
 
-	void Update(Uint32 deltaTime) override;
+	void Update(float deltaTime) override;
+	void TakeDamage();
+
+private:
+	int mHealth = ENEMY_HEALTH;
+	float mSpeed = ENEMY_SPEED;
 };
 

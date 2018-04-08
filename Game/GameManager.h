@@ -18,6 +18,10 @@ public:
 	void Run();
 
 private:
+	void HandleInput(SDL_Event& e);
+	void CheckCollisions();
+	void KeepCameraInBounds();
+
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
 	TextureManager* mTextureManager;
@@ -28,5 +32,7 @@ private:
 	std::vector<Enemy*> mEnemies;
 	BulletPool* mPlayerBulletPool;
 	BulletPool* mEnemyBulletPool;
+
+	bool mIsGameRunning;
 };
 

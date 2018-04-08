@@ -13,15 +13,15 @@ Bullet::~Bullet()
 }
 
 
-void Bullet::Shoot(Vector2 startPos, Vector2 velocity)
+void Bullet::Shoot(Vector2 startPos, Vector2 dir)
 {
 	mPosition = startPos;
 	mCollider.x = mPosition.x;
 	mCollider.y = mPosition.y;
-	mVelocity = velocity;
+	mVelocity = dir * mSpeed;
 }
 
-void Bullet::Update(Uint32 deltaTime)
+void Bullet::Update(float deltaTime)
 {
 	if (!mIsActive)
 	{

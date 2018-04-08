@@ -12,7 +12,7 @@ Enemy::~Enemy()
 {
 }
 
-void Enemy::Update(Uint32 deltaTime)
+void Enemy::Update(float deltaTime)
 {
 	if (!mIsActive)
 	{
@@ -22,4 +22,13 @@ void Enemy::Update(Uint32 deltaTime)
 	mPosition += mVelocity * deltaTime;
 	mCollider.x = mPosition.x;
 	mCollider.y = mPosition.y;
+}
+
+void Enemy::TakeDamage()
+{
+	if (--mHealth <= 0)
+	{
+		// TODO: DIE
+		std::cout << "enemy ded" << std::endl;
+	}
 }
