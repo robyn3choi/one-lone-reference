@@ -5,7 +5,6 @@ Player::Player(TextureType textureType) :
 {
 }
 
-
 Player::~Player()
 {
 }

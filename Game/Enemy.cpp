@@ -2,8 +2,9 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(TextureType textureType) :
-	GameObject(textureType)
+Enemy::Enemy(TextureType textureType, Player* player) :
+	GameObject(textureType),
+	mPlayer(player)
 {
 }
 
