@@ -1,7 +1,7 @@
 #include "GameManager.h"
 #include "Bullet.h"
 #include "BulletPool.h"
-
+#include <time.h>
 
 GameManager::GameManager()
 {
@@ -15,7 +15,7 @@ GameManager::~GameManager()
 bool GameManager::Initialize()
 {
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -48,6 +48,7 @@ bool GameManager::Initialize()
 		return false;
 	}
 
+	srand(time(NULL));
 	mTextureManager = new TextureManager(mRenderer);
 	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
@@ -58,13 +59,16 @@ void GameManager::CreateGameObjects()
 {
 	mPlayer = new Player(TextureType::Player);
 
-	for (int i = 0; i < NUM_ENEMIES; i++)
-	{
-		mEnemies.push_back(new Enemy(TextureType::Enemy));
-	}
-
 	mPlayerBulletPool = new BulletPool(PLAYER_BULLET_POOL_SIZE, TextureType::PlayerBullet, PLAYER_BULLET_SPEED, false);
 	mEnemyBulletPool = new BulletPool(ENEMY_BULLET_POOL_SIZE,  TextureType::EnemyBullet, ENEMY_BULLET_SPEED, true);
+
+	for (int i = 0; i < NUM_ENEMIES; i++)
+	{
+		mEnemies.push_back(new Enemy(TextureType::Enemy, mPlayer, mEnemyBulletPool));
+		mEnemies[i]->SetActive(false);
+	}
+
+	mEnemySpawner = new EnemySpawner(mEnemies);
 
 	// put all gameObjects into mGameObjects
 	mGameObjects.push_back(mPlayer);
@@ -113,9 +117,10 @@ void GameManager::Run()
 
 	mPlayer->SetPosition(Vector2(20, 1));
 
-	mEnemies[0]->SetPosition(Vector2(300, 1));
-	mEnemies[1]->SetPosition(Vector2(400, 1));
-	mEnemies[2]->SetPosition(Vector2(400, 1));
+	//mEnemies[0]->SetPosition(Vector2(800, 600));
+	//mEnemies[1]->SetPosition(Vector2(400, 1));
+	//mEnemies[2]->SetPosition(Vector2(400, 400));
+	mEnemySpawner->SpawnInitialEnemies();
 
 	float playerWidth = TextureManager::GetTexture(TextureType::Player)->GetWidth();
 	float playerHeight = TextureManager::GetTexture(TextureType::Player)->GetHeight();
@@ -237,7 +242,7 @@ void GameManager::CheckCollisions()
 		{
 			if (!mPlayer->IsDashing())
 			{
-				// TODO: damage player
+				mPlayer->TakeDamage();
 				mEnemyBulletPool->ReturnBullet(bullet);
 				std::cout << "player damaged" << std::endl;
 			}
@@ -255,7 +260,7 @@ void GameManager::CheckCollisions()
 			}
 			if (SDL_HasIntersection(&enemy->GetCollider(), &bullet->GetCollider()))
 			{
-				// TODO: damage enemy
+				enemy->TakeDamage();
 				mPlayerBulletPool->ReturnBullet(bullet);
 				std::cout << "enemy damaged" << std::endl;
 			}

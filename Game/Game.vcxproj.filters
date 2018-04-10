@@ -14,6 +14,7 @@
     <ClCompile Include="BulletPool.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemySpawner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled">
@@ -34,5 +35,6 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemySpawner.h" />
   </ItemGroup>
 </Project>

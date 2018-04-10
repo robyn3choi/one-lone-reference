@@ -15,6 +15,7 @@ Bullet::~Bullet()
 
 void Bullet::Shoot(Vector2 startPos, Vector2 dir)
 {
+	dir.Normalize();
 	mPosition = startPos;
 	mCollider.x = mPosition.x;
 	mCollider.y = mPosition.y;

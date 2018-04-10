@@ -4,6 +4,7 @@
 #include "BulletPool.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "EnemySpawner.h"
 
 class GameManager
 {
@@ -32,6 +33,7 @@ private:
 	std::vector<Enemy*> mEnemies;
 	BulletPool* mPlayerBulletPool;
 	BulletPool* mEnemyBulletPool;
+	EnemySpawner* mEnemySpawner;
 
 	bool mIsGameRunning;
 };
