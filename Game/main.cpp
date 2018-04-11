@@ -3,17 +3,17 @@
 
 int main(int argc, char* args[])
 {
-	GameManager gameManager;
+	//GameManager gameManager;
 
 	//Start up SDL and create window
-	if (!gameManager.Initialize())
+	if (!GameManager::Instance().Initialize())
 	{
 		printf("Failed to initialize!\n");
 	}
 
-	gameManager.CreateGameObjects();
+	GameManager::Instance().CreateGameObjects();
 
-	gameManager.Run();
+	GameManager::Instance().Run();
 
 
 	return 0;

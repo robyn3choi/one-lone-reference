@@ -9,7 +9,8 @@ enum class TextureType
 	Player,
 	PlayerBullet,
 	Enemy,
-	EnemyBullet
+	EnemyBullet,
+	Ground
 };
 
 class TextureManager
@@ -18,10 +19,10 @@ public:
 	TextureManager(SDL_Renderer*& renderer);
 	~TextureManager();
 
-	static Texture* GetTexture(TextureType t);
+	Texture* GetTexture(TextureType t);
 
 private:
 	SDL_Renderer*& mRenderer;
 	std::vector<std::string> mPaths;
-	static std::vector<Texture*> mTextures;
+	std::vector<Texture*> mTextures;
 };

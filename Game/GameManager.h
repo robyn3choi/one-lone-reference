@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "TextureManager.h"
 #include "GameObject.h"
 #include "BulletPool.h"
 #include "Enemy.h"
@@ -9,31 +10,42 @@
 class GameManager
 {
 public:
-	GameManager();
 	~GameManager();
+
+	static GameManager& Instance()
+	{
+		static GameManager *instance = new GameManager();
+		return *instance;
+	}
+
 
 	bool Initialize();
 	void CreateGameObjects();
-
 	void Close();
 	void Run();
+	void HandleEnemyDeath();
+	void HandlePlayerDeath();
+	TextureManager* GetTextureManager();
+	bool IsOutOfBounds(Vector2 pos, float width, float height);
 
 private:
+	GameManager();
 	void HandleInput(SDL_Event& e);
 	void CheckCollisions();
 	void KeepCameraInBounds();
 
-	SDL_Window* mWindow;
-	SDL_Renderer* mRenderer;
-	TextureManager* mTextureManager;
+	SDL_Window* mWindow = nullptr;
+	SDL_Renderer* mRenderer = nullptr;
+	TextureManager* mTextureManager = nullptr;
 	SDL_Rect mCamera;
 	std::vector<GameObject*> mGameObjects;
+	Texture* mGroundTexture = nullptr;
 
-	Player* mPlayer;
+	Player* mPlayer = nullptr;
 	std::vector<Enemy*> mEnemies;
-	BulletPool* mPlayerBulletPool;
-	BulletPool* mEnemyBulletPool;
-	EnemySpawner* mEnemySpawner;
+	BulletPool* mPlayerBulletPool = nullptr;
+	BulletPool* mEnemyBulletPool = nullptr;
+	EnemySpawner* mEnemySpawner = nullptr;
 
 	bool mIsGameRunning;
 };

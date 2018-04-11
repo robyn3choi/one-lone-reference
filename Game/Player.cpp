@@ -19,7 +19,6 @@ void Player::Update(float deltaTime)
 	if (mIsDashing)
 	{
 		mDashTimer -= deltaTime;
-		std::cout << mDashTimer << std::endl;
 		if (mDashTimer <= 0)
 		{
 			mIsDashing = false;
@@ -27,9 +26,24 @@ void Player::Update(float deltaTime)
 		}
 	}
 
-	mPosition += mVelocity * deltaTime;
-	mCollider.x = mPosition.x;
-	mCollider.y = mPosition.y;
+	// TODO: refactor?
+	Texture* tex = GameManager::Instance().GetTextureManager()->GetTexture(TextureType::Player);
+	float texWidth = tex->GetWidth();
+	float texHeight = tex->GetHeight();
+
+	float nextX = mPosition.x + mVelocity.x * deltaTime;
+	float nextY = mPosition.y + mVelocity.y * deltaTime;
+
+	if (nextX <= LEVEL_WIDTH - texWidth && nextX >= 0)
+	{
+		mPosition.x = nextX;
+		mCollider.x = mPosition.x;
+	}
+	if (nextY <= LEVEL_HEIGHT - texHeight && nextY >= 0)
+	{
+		mPosition.y = nextY;
+		mCollider.y = mPosition.y;
+	}
 }
 
 void Player::Move(Vector2 dir)

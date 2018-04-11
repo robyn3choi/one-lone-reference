@@ -7,10 +7,6 @@ Enemy::Enemy(TextureType textureType, Player* player, BulletPool* bulletPool) :
 	mPlayer(player),
 	mBulletPool(bulletPool)
 {
-	//srand(time(NULL));
-	//int randomFactor = rand() % 5;
-	//mDistanceFromPlayer = ENEMY_DISTANCE_FROM_PLAYER + (float)(randomFactor * 100);
-	//std::cout << randomFactor << std::endl;
 }
 
 
@@ -54,7 +50,19 @@ void Enemy::TakeDamage()
 {
 	if (--mHealth <= 0)
 	{
-		// TODO: DIE
-		std::cout << "enemy ded" << std::endl;
+		SetActive(false);
+		GameManager::Instance().HandleEnemyDeath();
 	}
+}
+
+void Enemy::Spawn()
+{
+	mIsActive = true;
+	int randomFactor = rand() % 5;
+	mDistanceFromPlayer = ENEMY_DISTANCE_FROM_PLAYER + (float)(randomFactor * 100);
+
+	float randomX = rand() % LEVEL_WIDTH;
+	float randomY = rand() % LEVEL_HEIGHT;
+	mPosition.x = randomX;
+	mPosition.y = randomY;
 }

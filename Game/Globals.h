@@ -1,13 +1,16 @@
 #pragma once
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-const int LEVEL_WIDTH = 3000;
-const int LEVEL_HEIGHT = 2000;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
+//const int SCREEN_WIDTH = 1280;
+//const int SCREEN_HEIGHT = 720;
+const int LEVEL_WIDTH = 2800;
+const int LEVEL_HEIGHT = 1800;
+const int TILE_WIDTH = 100;
 
-const float PLAYER_SPEED = 1000;
+const float PLAYER_SPEED = 600;
 const int PLAYER_BULLET_SPEED = 3000;
-const int PLAYER_BULLET_POOL_SIZE = 16;
+const int PLAYER_BULLET_POOL_SIZE = 32;
 const int PLAYER_HEALTH = 10;
 const float DASH_TIME = 0.1f;
 const float DASH_SPEED = 3000;

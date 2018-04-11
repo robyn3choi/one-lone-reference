@@ -4,19 +4,14 @@ GameObject::GameObject(TextureType textureType) :
 	mTextureType(textureType)
 {
 	//TODO: CHANGE SO THAT THE COLLIDER IS SMALLER THAN THE TEXTURE
-	int width = TextureManager::GetTexture(mTextureType)->GetWidth();
-	int height = TextureManager::GetTexture(mTextureType)->GetHeight();
+	int width = GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetWidth();
+	int height = GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetHeight();
 	mCollider = { 0, 0, width, height };
 }
 
 
 GameObject::~GameObject()
 {
-}
-
-void GameObject::Render(SDL_Rect & camera)
-{
-	TextureManager::GetTexture(mTextureType)->Render(mPosition.x - camera.x, mPosition.y - camera.y);
 }
 
 void GameObject::SetActive(bool active)
@@ -54,4 +49,9 @@ void GameObject::SetVelocity(Vector2& velocity)
 const SDL_Rect GameObject::GetCollider() const
 {
 	return mCollider;
+}
+
+TextureType GameObject::GetTextureType() const
+{
+	return mTextureType;
 }

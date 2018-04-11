@@ -34,12 +34,7 @@ bool EnemySpawner::SpawnEnemy()
 	{
 		return false;
 	}
-	mEnemies[mEnemyIndex]->SetActive(true);
-
-	float randomX = rand() % LEVEL_WIDTH;
-	float randomY = rand() % LEVEL_HEIGHT;
-	mEnemies[mEnemyIndex]->SetPosition(Vector2(randomX, randomY));
-
+	mEnemies[mEnemyIndex]->Spawn();
 	mEnemyIndex++;
 	return true;
 }

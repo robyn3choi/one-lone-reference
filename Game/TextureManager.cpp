@@ -1,8 +1,6 @@
 #include "Precompiled.h"
 #include "TextureManager.h"
 
-std::vector<Texture*> TextureManager::mTextures;
-
 TextureManager::TextureManager(SDL_Renderer*& renderer) :
 	mRenderer(renderer)
 {
@@ -11,7 +9,8 @@ TextureManager::TextureManager(SDL_Renderer*& renderer) :
 		"Images/testImage.png",
 		"Images/cursor.png",
 		"Images/testImage.png",
-		"Images/cursor.png"
+		"Images/cursor.png",
+		"Images/bricks2.png"
 	};
 
 	mPaths = std::vector<std::string>(std::begin(pathsArray), std::end(pathsArray));
