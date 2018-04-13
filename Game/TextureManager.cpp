@@ -10,7 +10,8 @@ TextureManager::TextureManager(SDL_Renderer*& renderer) :
 		"Images/cursor.png",
 		"Images/testImage.png",
 		"Images/cursor.png",
-		"Images/bricks2.png"
+		"Images/bricks2.png",
+		"Images/circle.png"
 	};
 
 	mPaths = std::vector<std::string>(std::begin(pathsArray), std::end(pathsArray));

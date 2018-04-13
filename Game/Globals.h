@@ -12,8 +12,10 @@ const float PLAYER_SPEED = 600;
 const int PLAYER_BULLET_SPEED = 3000;
 const int PLAYER_BULLET_POOL_SIZE = 32;
 const int PLAYER_HEALTH = 10;
+const float PLAYER_FIRE_RATE = 0.4;
 const float DASH_TIME = 0.1f;
 const float DASH_SPEED = 3000;
+const float CURSOR_RADIUS = 100;
 
 const float ENEMY_SPEED = 150;
 const int ENEMY_BULLET_SPEED = 400;

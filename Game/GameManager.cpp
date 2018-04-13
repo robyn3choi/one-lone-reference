@@ -23,7 +23,7 @@ bool GameManager::Initialize()
 	}
 
 	//Create window
-	mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED);
+	mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN || SDL_WINDOW_FULLSCREEN );
 	if (mWindow == NULL)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -175,6 +175,8 @@ void GameManager::Run()
 			}
 		}
 
+		mTextureManager->GetTexture(TextureType::Cursor)->Render(m_CursorPos.x - mCamera.x, m_CursorPos.y - mCamera.y);
+
 		//Update screen
 		SDL_RenderPresent(mRenderer);
 	}
@@ -190,12 +192,18 @@ void GameManager::HandleEnemyDeath()
 
 void GameManager::HandlePlayerDeath()
 {
+
 }
 
 TextureManager * GameManager::GetTextureManager()
 {
 	return mTextureManager;
 }
+
+//TTF_Font * GameManager::GetFont()
+//{
+//	return mFont;
+//}
 
 void GameManager::HandleInput(SDL_Event& e)
 {
@@ -226,6 +234,9 @@ void GameManager::HandleInput(SDL_Event& e)
 
 	mPlayer->Move(moveDir);
 
+	Vector2 centrePos = Vector2(mCamera.x + SCREEN_WIDTH / 2, mCamera.y + SCREEN_HEIGHT / 2);
+	m_CursorPos = centrePos + mouseDir * CURSOR_RADIUS;
+
 	//Handle events on queue
 	while (SDL_PollEvent(&e) != 0)
 	{
@@ -233,25 +244,30 @@ void GameManager::HandleInput(SDL_Event& e)
 		{
 			mIsGameRunning = false;
 		}
-		// shoot
-		if (e.type == SDL_MOUSEBUTTONDOWN) {
-			Bullet* bullet = mPlayerBulletPool->GetBullet();
-			bullet->Shoot(mPlayer->GetPosition(), mouseDir);
-		}
-		//dash
-		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LSHIFT)
+		
+		if (e.type == SDL_MOUSEBUTTONDOWN) 
 		{
-			if (mPlayer->IsDashing())
+			if (e.button.button == SDL_BUTTON_LEFT)
 			{
-				return;
+				// shoot
+				Bullet* bullet = mPlayerBulletPool->GetBullet();
+				bullet->Shoot(m_CursorPos, mouseDir);
 			}
-			if (moveDir.GetLength() == 0)
+			if (e.button.button == SDL_BUTTON_RIGHT)
 			{
-				mPlayer->Dash(mouseDir);
-			}
-			else
-			{
-				mPlayer->Dash(moveDir);
+				//dash
+				if (mPlayer->IsDashing())
+				{
+					return;
+				}
+				if (moveDir.GetLength() == 0)
+				{
+					mPlayer->Dash(mouseDir);
+				}
+				else
+				{
+					mPlayer->Dash(moveDir);
+				}
 			}
 		}
 	}

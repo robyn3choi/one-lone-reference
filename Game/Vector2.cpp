@@ -48,7 +48,7 @@ void Vector2::operator-=(const Vector2 & rhs)
 
 Vector2 operator+(const Vector2 & lhs, const Vector2 & rhs)
 {
-	return Vector2(lhs.x + rhs.x, rhs.y + rhs.y);
+	return Vector2(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
 Vector2 operator-(const Vector2 & lhs, const Vector2 & rhs)

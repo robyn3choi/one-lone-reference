@@ -10,7 +10,8 @@ enum class TextureType
 	PlayerBullet,
 	Enemy,
 	EnemyBullet,
-	Ground
+	Ground,
+	Cursor
 };
 
 class TextureManager
