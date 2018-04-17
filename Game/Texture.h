@@ -12,7 +12,7 @@ public:
 	bool LoadFromFile(std::string path);
 
 	//Creates image from font string 
-	//bool LoadFromRenderedText(TTF_Font* font, std::string textureText, SDL_Color textColor );
+	bool LoadFromRenderedText(TTF_Font* font, std::string textureText, SDL_Color textColor );
 
 	//Deallocates texture
 	void Free();

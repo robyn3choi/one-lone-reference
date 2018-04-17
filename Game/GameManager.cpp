@@ -200,10 +200,10 @@ TextureManager * GameManager::GetTextureManager()
 	return mTextureManager;
 }
 
-//TTF_Font * GameManager::GetFont()
-//{
-//	return mFont;
-//}
+TTF_Font * GameManager::GetFont()
+{
+	return mFont;
+}
 
 void GameManager::HandleInput(SDL_Event& e)
 {
