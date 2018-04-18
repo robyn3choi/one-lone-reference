@@ -23,7 +23,7 @@ bool GameManager::Initialize()
 	}
 
 	//Create window
-	mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN || SDL_WINDOW_FULLSCREEN );
+	mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED);
 	if (mWindow == NULL)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -48,7 +48,7 @@ bool GameManager::Initialize()
 		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
 		return false;
 	}
-
+	//SDL_SetRelativeMouseMode(SDL_TRUE);
 	srand(time(NULL));
 	mTextureManager = new TextureManager(mRenderer);
 	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
