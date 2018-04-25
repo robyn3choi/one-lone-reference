@@ -13,6 +13,7 @@ public:
 	void Update(float deltaTime) override;
 	void TakeDamage();
 	void Spawn();
+	void Reset();
 
 private:
 	int mHealth = ENEMY_HEALTH;

@@ -11,7 +11,7 @@ public:
 	// must be static to be a callback for SDL_Timer
 	static Uint32 SpawnEnemyCallback(Uint32 interval, void* param);
 	bool SpawnEnemy();
-	
+	void Reset();
 
 private:
 	std::vector<Enemy*>& mEnemies;

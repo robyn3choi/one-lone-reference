@@ -66,3 +66,9 @@ void Enemy::Spawn()
 	mPosition.x = randomX;
 	mPosition.y = randomY;
 }
+
+void Enemy::Reset()
+{
+	mHealth = ENEMY_HEALTH;
+	SetActive(false);
+}

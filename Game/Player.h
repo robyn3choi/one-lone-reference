@@ -13,6 +13,7 @@ public:
 	void TakeDamage();
 	void Dash(Vector2 dir);
 	bool IsDashing();
+	void Reset();
 
 private:
 	float mSpeed = PLAYER_SPEED;
@@ -21,6 +22,5 @@ private:
 	float mFireTimer = PLAYER_FIRE_RATE;
 	bool mIsDashing = false;
 	float mDashTimer = DASH_TIME;
-	//BulletPool* mBulletPool;
 };
 

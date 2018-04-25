@@ -1,4 +1,4 @@
-// adapted from lazyfoo.net
+// taken from lazyfoo.net
 
 #pragma once
 

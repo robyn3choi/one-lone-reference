@@ -26,16 +26,6 @@ void Player::Update(float deltaTime)
 		}
 	}
 
-	//if (mIsFiring)
-	//{
-	//	mFireTimer -= deltaTime;
-	//	if (mFireTimer <= 0)
-	//	{
-	//		Bullet* bullet = mBulletPool->GetBullet();
-	//		bullet->Shoot(m_CursorPos, mouseDir);
-	//	}
-	//}
-
 	// TODO: refactor?
 	Texture* tex = GameManager::Instance().GetTextureManager()->GetTexture(TextureType::Player);
 	float texWidth = tex->GetWidth();
@@ -68,8 +58,7 @@ void Player::TakeDamage()
 {
 	if (--mHealth <= 0)
 	{
-		// TODO: DIE
-		std::cout << "ded" << std::endl;
+		GameManager::Instance().HandlePlayerDeath();
 	}
 }
 
@@ -82,4 +71,9 @@ void Player::Dash(Vector2 dir)
 bool Player::IsDashing()
 {
 	return mIsDashing;
+}
+
+void Player::Reset()
+{
+	mHealth = PLAYER_HEALTH;
 }

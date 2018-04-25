@@ -119,6 +119,8 @@ void GameManager::Close()
 	SDL_Quit();
 }
 
+
+
 void GameManager::Run()
 {
 	float last = 0;
@@ -128,9 +130,7 @@ void GameManager::Run()
 	//Event handler
 	SDL_Event e;
 
-	mPlayer->SetPosition(Vector2(20, 1));
-
-	mEnemySpawner->SpawnInitialEnemies();
+	SetToInitialState();
 
 	float playerWidth = mTextureManager->GetTexture(TextureType::Player)->GetWidth();
 	float playerHeight = mTextureManager->GetTexture(TextureType::Player)->GetHeight();
@@ -175,6 +175,16 @@ void GameManager::Run()
 			}
 		}
 
+		if (mIsGameOver)
+		{
+			Texture* gameOverText = mTextureManager->GetTexture(TextureType::GameOverText);
+			gameOverText->Render(SCREEN_WIDTH/2 - gameOverText->GetWidth()/2, 200);
+
+			// TODO: REFACTOR
+			mTryAgainButton = mTextureManager->GetTexture(TextureType::TryAgainButton);
+			mTryAgainButton->Render(SCREEN_WIDTH/2 - mTryAgainButton->GetWidth()/2, 700);
+		}
+
 		mTextureManager->GetTexture(TextureType::Cursor)->Render(m_CursorPos.x - mCamera.x, m_CursorPos.y - mCamera.y);
 
 		//Update screen
@@ -185,6 +195,12 @@ void GameManager::Run()
 	Close();
 }
 
+void GameManager::SetToInitialState()
+{
+	mPlayer->SetPosition(Vector2(20, 1));
+	mEnemySpawner->SpawnInitialEnemies();
+}
+
 void GameManager::HandleEnemyDeath()
 {
 	mEnemySpawner->SpawnEnemy();
@@ -192,17 +208,21 @@ void GameManager::HandleEnemyDeath()
 
 void GameManager::HandlePlayerDeath()
 {
+	mIsGameOver = true;
+	mEnemySpawner->Reset();
+}
 
+void GameManager::Restart()
+{
+	mIsGameOver = false;
+	mPlayer->Reset();
+	mEnemySpawner->Reset();
+	SetToInitialState();
 }
 
 TextureManager * GameManager::GetTextureManager()
 {
 	return mTextureManager;
-}
-
-TTF_Font * GameManager::GetFont()
-{
-	return mFont;
 }
 
 void GameManager::HandleInput(SDL_Event& e)
@@ -267,6 +287,24 @@ void GameManager::HandleInput(SDL_Event& e)
 				else
 				{
 					mPlayer->Dash(moveDir);
+				}
+			}
+		}
+
+		if (e.type == SDL_MOUSEBUTTONUP)
+		{
+			if (e.button.button == SDL_BUTTON_LEFT)
+			{
+				float tryAgainBtnX = SCREEN_WIDTH / 2 - mTryAgainButton->GetWidth() / 2;
+				float tryAgainBtnY = 700;
+				//If the mouse is over the button 
+				if ((mouseX > tryAgainBtnX) &&
+					(mouseX <tryAgainBtnX + mTryAgainButton->GetWidth()) &&
+					(mouseY > tryAgainBtnY) &&
+					(mouseY < tryAgainBtnY + mTryAgainButton->GetHeight()) )
+				{ 
+					//Set the button sprite 
+					Restart();
 				}
 			}
 		}

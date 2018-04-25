@@ -11,7 +11,15 @@ enum class TextureType
 	Enemy,
 	EnemyBullet,
 	Ground,
-	Cursor
+	Cursor,
+	GameOverText,
+	TryAgainButton
+};
+
+enum class TTFTextureType
+{
+	GameOver,
+	TryAgain
 };
 
 class TextureManager
@@ -23,7 +31,11 @@ public:
 	Texture* GetTexture(TextureType t);
 
 private:
+	void LoadTextures();
+	void LoadTTFTextures();
+
 	SDL_Renderer*& mRenderer;
 	std::vector<std::string> mPaths;
 	std::vector<Texture*> mTextures;
+	std::vector<Texture*> mTTFTextures;
 };

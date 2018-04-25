@@ -38,3 +38,11 @@ bool EnemySpawner::SpawnEnemy()
 	mEnemyIndex++;
 	return true;
 }
+
+void EnemySpawner::Reset()
+{
+	for (Enemy* enemy : mEnemies)
+	{
+		enemy->Reset();
+	}
+}

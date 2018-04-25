@@ -23,10 +23,11 @@ public:
 	void CreateGameObjects();
 	void Close();
 	void Run();
+	void SetToInitialState();
 	void HandleEnemyDeath();
 	void HandlePlayerDeath();
+	void Restart();
 	TextureManager* GetTextureManager();
-	TTF_Font* GetFont();
 	bool IsOutOfBounds(Vector2 pos, float width, float height);
 
 private:
@@ -37,7 +38,6 @@ private:
 
 	SDL_Window* mWindow = nullptr;
 	SDL_Renderer* mRenderer = nullptr;
-	TTF_Font* mFont = nullptr;
 	TextureManager* mTextureManager = nullptr;
 	SDL_Rect mCamera;
 	std::vector<GameObject*> mGameObjects;
@@ -50,6 +50,9 @@ private:
 	EnemySpawner* mEnemySpawner = nullptr;
 
 	bool mIsGameRunning;
+	bool mIsGameOver = false;
 	Vector2 m_CursorPos;
+
+	Texture* mTryAgainButton;
 };
 
