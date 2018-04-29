@@ -46,7 +46,6 @@ void GameManager::CreateWindow()
 	
 	mWindow = std::move(window);
 
-
 	if (mWindow == nullptr)
 	{
 		throw SDLWindowCreationErrorException(SDL_GetError());
