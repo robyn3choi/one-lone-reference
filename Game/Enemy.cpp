@@ -40,8 +40,8 @@ void Enemy::Update(float deltaTime)
 	mFireTimer -= deltaTime;
 	if (mFireTimer <= 0)
 	{
-		Bullet* bullet = mBulletPool->GetBullet();
-		bullet->Shoot(mPosition, vectorToPlayer);
+		//Bullet* bullet = mBulletPool->GetBullet();
+		mBulletPool->GetBullet()->Shoot(mPosition, vectorToPlayer);
 		mFireTimer = ENEMY_FIRE_RATE;
 	}
 }

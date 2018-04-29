@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include "Player.h"
 #include "EnemySpawner.h"
+#include "SDLDeleters.h"
 
 class GameManager
 {
@@ -20,14 +21,17 @@ public:
 
 
 	bool Initialize();
+	void InitializeSDL();
+	void CreateWindow();
+	void CreateRenderer();
+	void InitializeSDLImage();
 	void CreateGameObjects();
 	void Close();
 	void Run();
-	void SetToInitialState();
 	void HandleEnemyDeath();
 	void HandlePlayerDeath();
 	void Restart();
-	TextureManager* GetTextureManager();
+	TextureManager* const GetTextureManager();
 	bool IsOutOfBounds(Vector2 pos, float width, float height);
 
 private:
@@ -35,24 +39,30 @@ private:
 	void HandleInput(SDL_Event& e);
 	void CheckCollisions();
 	void KeepCameraInBounds();
+	void SetToInitialState();
+	void CenterCameraOverPlayer(float playerWidth, float playerHeight);
+	void RenderTiledGround();
+	float GetDeltaTime(float& timeAtPreviousFrame);
+	void UpdateAndRenderGameObjects(float deltaTime);
+	void RenderGameOverUI();
 
-	SDL_Window* mWindow = nullptr;
-	SDL_Renderer* mRenderer = nullptr;
-	TextureManager* mTextureManager = nullptr;
+	std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> mWindow = nullptr;
+	std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> mRenderer = nullptr;
+	std::unique_ptr<TextureManager> mTextureManager = nullptr;
 	SDL_Rect mCamera;
-	std::vector<GameObject*> mGameObjects;
-	Texture* mGroundTexture = nullptr;
 
-	Player* mPlayer = nullptr;
-	std::vector<Enemy*> mEnemies;
-	BulletPool* mPlayerBulletPool = nullptr;
-	BulletPool* mEnemyBulletPool = nullptr;
-	EnemySpawner* mEnemySpawner = nullptr;
+	std::vector<std::unique_ptr<GameObject>> mGameObjects;
+	std::unique_ptr<Player> mPlayer = nullptr;
+	std::vector<std::unique_ptr<Enemy>> mEnemies;
+	std::unique_ptr<BulletPool> mPlayerBulletPool = nullptr;
+	std::unique_ptr<BulletPool> mEnemyBulletPool = nullptr;
+	std::unique_ptr<EnemySpawner> mEnemySpawner = nullptr;
 
 	bool mIsGameRunning;
 	bool mIsGameOver = false;
 	Vector2 m_CursorPos;
 
-	Texture* mTryAgainButton;
+	std::unique_ptr<Texture> mTryAgainButton;
+	std::unique_ptr<Texture> mGroundTexture = nullptr;
 };
 

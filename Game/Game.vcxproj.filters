@@ -36,5 +36,7 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySpawner.h" />
+    <ClInclude Include="Exceptions.h" />
+    <ClInclude Include="SDLDeleters.h" />
   </ItemGroup>
 </Project>

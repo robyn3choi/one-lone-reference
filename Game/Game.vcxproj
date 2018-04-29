@@ -200,12 +200,14 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySpawner.h" />
+    <ClInclude Include="Exceptions.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Precompiled.h" />
+    <ClInclude Include="SDLDeleters.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Vector2.h" />

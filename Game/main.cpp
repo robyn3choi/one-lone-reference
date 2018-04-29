@@ -1,14 +1,18 @@
 #include "Precompiled.h"
 #include "GameManager.h"
+#include <iostream>
+#include <string>
 
-int main(int argc, char* args[])
+int main(int argc, char* argv[])
 {
-	//GameManager gameManager;
-
-	//Start up SDL and create window
-	if (!GameManager::Instance().Initialize())
+	try 
 	{
-		printf("Failed to initialize!\n");
+		GameManager::Instance().Initialize();
+	}
+	catch (std::exception e)
+	{
+		std::cout << e.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 
 	GameManager::Instance().CreateGameObjects();

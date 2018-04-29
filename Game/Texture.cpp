@@ -1,4 +1,4 @@
-// taken from lazyfoo.net
+// adapted from lazyfoo.net
 
 #include "Texture.h"
 
@@ -27,7 +27,7 @@ bool Texture::LoadFromFile(std::string path)
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL)
 	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+		throw SDLImageLoadErrorException(path, IMG_GetError());
 	}
 	else
 	{
@@ -38,7 +38,7 @@ bool Texture::LoadFromFile(std::string path)
 		newTexture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
 		if (newTexture == NULL)
 		{
-			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+			throw SDLTextureCreationErrorException(path, SDL_GetError());
 		}
 		else
 		{
@@ -56,6 +56,7 @@ bool Texture::LoadFromFile(std::string path)
 	return mTexture != NULL;
 }
 
+// TODO: add exceptions if we actually use text
 bool Texture::LoadFromRenderedText(TTF_Font* font, std::string textureText, SDL_Color textColor)
 {
 	//Get rid of preexisting texture

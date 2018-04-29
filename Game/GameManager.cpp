@@ -1,8 +1,8 @@
 #include "GameManager.h"
 #include "Bullet.h"
 #include "BulletPool.h"
+#include "Exceptions.h"
 #include <time.h>
-
 
 GameManager::GameManager()
 {
@@ -15,64 +15,89 @@ GameManager::~GameManager()
 
 bool GameManager::Initialize()
 {
-	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
-	{
-		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		return false;
-	}
+	InitializeSDL();
+	CreateWindow();
+	CreateRenderer();
+	InitializeSDLImage();
 
-	//Create window
-	mWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED);
-	if (mWindow == NULL)
-	{
-		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-		return false;
-	}
-
-	//Create renderer for window
-	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
-	if (mRenderer == NULL)
-	{
-		printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-		return false;
-	}
-
-	//Initialize renderer color
-	SDL_SetRenderDrawColor(mRenderer, 15, 15, 15, 255);
-
-	//Initialize PNG loading
-	int imgFlags = IMG_INIT_PNG;
-	if (!(IMG_Init(imgFlags) & imgFlags))
-	{
-		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-		return false;
-	}
 	//SDL_SetRelativeMouseMode(SDL_TRUE);
 	srand(time(NULL));
-	mTextureManager = new TextureManager(mRenderer);
+	mTextureManager = std::make_unique<TextureManager>(mRenderer);
 	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	return true;
 }
 
+void GameManager::InitializeSDL()
+{
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
+	{
+		throw SDLInitializationErrorException(SDL_GetError());
+	}
+}
+
+void GameManager::CreateWindow()
+{
+	//mWindow = std::make_unique<SDL_Window>(SDL_CreateWindow("One Lone Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,
+	//	SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED), SDL_DestroyWindow);
+
+	std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow("One Lone Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,
+		SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED), SDL_DestroyWindow);
+	
+	mWindow = std::move(window);
+
+
+	if (mWindow == nullptr)
+	{
+		throw SDLWindowCreationErrorException(SDL_GetError());
+	}
+}
+
+void GameManager::CreateRenderer()
+{
+	//mRenderer = std::make_unique<SDL_Renderer>(SDL_CreateRenderer(mWindow.get(), -1, 
+	//	SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyWindow);
+
+	std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(mWindow.get(), -1,
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
+
+	mRenderer = std::move(renderer);
+
+	if (mRenderer == nullptr)
+	{
+		throw SDLRendererCreationErrorException(SDL_GetError());
+	}
+	SDL_SetRenderDrawColor(mRenderer.get(), 15, 15, 15, 255);
+}
+
+void GameManager::InitializeSDLImage()
+{
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags))
+	{
+		throw SDLImageInitializationErrorException(SDL_GetError());
+	}
+}
+
+
 void GameManager::CreateGameObjects()
 {
-	mPlayer = new Player(TextureType::Player);
+	mPlayer = std::make_unique<Player>(new Player(TextureType::Player));
 
-	mPlayerBulletPool = new BulletPool(PLAYER_BULLET_POOL_SIZE, TextureType::PlayerBullet, PLAYER_BULLET_SPEED, false);
-	mEnemyBulletPool = new BulletPool(ENEMY_BULLET_POOL_SIZE,  TextureType::EnemyBullet, ENEMY_BULLET_SPEED, true);
+	mPlayerBulletPool = std::make_unique<BulletPool>(PLAYER_BULLET_POOL_SIZE, TextureType::PlayerBullet, PLAYER_BULLET_SPEED, false);
+	mEnemyBulletPool = std::make_unique<BulletPool>(ENEMY_BULLET_POOL_SIZE,  TextureType::EnemyBullet, ENEMY_BULLET_SPEED, true);
 
 	for (int i = 0; i < NUM_ENEMIES; i++)
 	{
-		mEnemies.push_back(new Enemy(TextureType::Enemy, mPlayer, mEnemyBulletPool));
-		mEnemies[i]->SetActive(false);
+		auto enemy = std::make_unique<Enemy>(TextureType::Enemy, mPlayer.get(), mEnemyBulletPool.get());
+		mEnemies.push_back(enemy);
+		enemy->SetActive(false);
 	}
 
-	mEnemySpawner = new EnemySpawner(mEnemies);
+	mEnemySpawner = std::make_unique<EnemySpawner>(mEnemies);
 
 	// put all gameObjects into mGameObjects
-	mGameObjects.push_back(mPlayer);
+	mGameObjects.push_back(std::move(mPlayer));
 	mGameObjects.insert(mGameObjects.end(), mEnemies.begin(), mEnemies.end());
 
 	auto pBulletPool = mPlayerBulletPool->GetPool();
@@ -82,39 +107,27 @@ void GameManager::CreateGameObjects()
 	mGameObjects.insert(mGameObjects.end(), eBulletPool.begin(), eBulletPool.end());
 
 	// environment
-	mGroundTexture = mTextureManager->GetTexture(TextureType::Ground);
+	mGroundTexture = std::make_unique<Texture>(std::move(mTextureManager->GetTexture(TextureType::Ground)));
 }
 
 
 void GameManager::Close()
 {
-	mPlayer = nullptr;
-	delete mTextureManager;
-	mTextureManager = nullptr;
-	delete mPlayerBulletPool;
-	mPlayerBulletPool = nullptr;
-	delete mEnemyBulletPool;
-	mEnemyBulletPool = nullptr;
-	delete mTextureManager;
-	mTextureManager = nullptr;
-	delete mEnemySpawner;
-	mEnemySpawner = nullptr;
-
+	mTextureManager.reset();
+	mTextureManager.reset();
+	mEnemySpawner.reset();
 	mEnemies.clear();
 
-	for(GameObject* g : mGameObjects)
+	for(auto& g : mGameObjects)
 	{
-		delete g;
-		g = nullptr;
+		g.reset();
 	}
 
-	//Destroy window	
-	SDL_DestroyRenderer(mRenderer);
-	SDL_DestroyWindow(mWindow);
-	mWindow = nullptr;
-	mRenderer = nullptr;
+	//SDL_DestroyRenderer(mRenderer.get());
+	//SDL_DestroyWindow(mWindow.get());
+	mWindow.reset();
+	mRenderer.reset();
 
-	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -123,7 +136,7 @@ void GameManager::Close()
 
 void GameManager::Run()
 {
-	float last = 0;
+	float timeAtPreviousFrame = 0;
 
 	mIsGameRunning = true;
 
@@ -135,63 +148,31 @@ void GameManager::Run()
 	float playerWidth = mTextureManager->GetTexture(TextureType::Player)->GetWidth();
 	float playerHeight = mTextureManager->GetTexture(TextureType::Player)->GetHeight();
 
-	//While application is running
 	while (mIsGameRunning)
 	{
 		HandleInput(e);
 
-		//Center the camera over the player
-		mCamera.x = (mPlayer->GetPosition().x + playerWidth / 2) - SCREEN_WIDTH / 2;
-		mCamera.y = (mPlayer->GetPosition().y + playerHeight / 2) - SCREEN_HEIGHT / 2;
+		CenterCameraOverPlayer(playerWidth, playerHeight);
 
 		CheckCollisions();
 		
-		//Clear screen
-		SDL_RenderClear(mRenderer);
+		SDL_RenderClear(mRenderer.get());
 
-		// Get deltaTime
-		float now = (float) SDL_GetTicks();
-		float deltaTime = (now - last) / 1000; // deltatime in seconds
-		last = now;
+		RenderTiledGround();
 
-		// render ground
-		for (int i = 0; i <= LEVEL_WIDTH - TILE_WIDTH; i += TILE_WIDTH)
-		{
-			for (int j = 0; j <= LEVEL_HEIGHT - TILE_WIDTH; j += TILE_WIDTH)
-			{
-				mGroundTexture->Render(i - mCamera.x, j - mCamera.y);
-			}
-		}
-
-		// update and render gameobjects
-		for (GameObject*& g : mGameObjects)
-		{
-			if (g->IsActive())
-			{
-				g->Update(deltaTime);
-				Vector2 pos = g->GetPosition();
-				Texture* tex = mTextureManager->GetTexture(g->GetTextureType());
-				tex->Render(pos.x - mCamera.x, pos.y - mCamera.y);
-			}
-		}
+		float deltaTime = GetDeltaTime(timeAtPreviousFrame);
+		UpdateAndRenderGameObjects(deltaTime);
 
 		if (mIsGameOver)
 		{
-			Texture* gameOverText = mTextureManager->GetTexture(TextureType::GameOverText);
-			gameOverText->Render(SCREEN_WIDTH/2 - gameOverText->GetWidth()/2, 200);
-
-			// TODO: REFACTOR
-			mTryAgainButton = mTextureManager->GetTexture(TextureType::TryAgainButton);
-			mTryAgainButton->Render(SCREEN_WIDTH/2 - mTryAgainButton->GetWidth()/2, 700);
+			RenderGameOverUI();
 		}
 
-		mTextureManager->GetTexture(TextureType::Cursor)->Render(m_CursorPos.x - mCamera.x, m_CursorPos.y - mCamera.y);
+		//mTextureManager->GetTexture(TextureType::Cursor)->Render(m_CursorPos.x - mCamera.x, m_CursorPos.y - mCamera.y);
 
-		//Update screen
-		SDL_RenderPresent(mRenderer);
+		SDL_RenderPresent(mRenderer.get());
 	}
 
-	//Free resources and close SDL
 	Close();
 }
 
@@ -201,8 +182,57 @@ void GameManager::SetToInitialState()
 	mEnemySpawner->SpawnInitialEnemies();
 }
 
+void GameManager::CenterCameraOverPlayer(float playerWidth, float playerHeight)
+{
+	mCamera.x = (mPlayer->GetPosition().x + playerWidth / 2) - SCREEN_WIDTH / 2;
+	mCamera.y = (mPlayer->GetPosition().y + playerHeight / 2) - SCREEN_HEIGHT / 2;
+}
+
+void GameManager::RenderTiledGround()
+{
+	for (int i = 0; i <= LEVEL_WIDTH - TILE_WIDTH; i += TILE_WIDTH)
+	{
+		for (int j = 0; j <= LEVEL_HEIGHT - TILE_WIDTH; j += TILE_WIDTH)
+		{
+			mGroundTexture->Render(i - mCamera.x, j - mCamera.y);
+		}
+	}
+}
+
+float GameManager::GetDeltaTime(float& timeAtPreviousFrame)
+{
+	float timeAtCurrentFrame = (float)SDL_GetTicks();
+	float deltaTime = (timeAtCurrentFrame - timeAtPreviousFrame) / 1000; // deltatime in seconds
+	timeAtPreviousFrame = timeAtCurrentFrame;
+	return deltaTime;
+}
+
+void GameManager::UpdateAndRenderGameObjects(float deltaTime)
+{
+	for (auto& g : mGameObjects)
+	{
+		if (g->IsActive())
+		{
+			g->Update(deltaTime);
+			Vector2 pos = g->GetPosition();
+			Texture* tex = mTextureManager->GetTexture(g->GetTextureType());
+			tex->Render(pos.x - mCamera.x, pos.y - mCamera.y);
+		}
+	}
+}
+
+void GameManager::RenderGameOverUI()
+{
+	Texture* gameOverText = mTextureManager->GetTexture(TextureType::GameOverText);
+	gameOverText->Render(SCREEN_WIDTH / 2 - gameOverText->GetWidth() / 2, 200);
+
+	// TODO: REFACTOR
+	mTryAgainButton->Render(SCREEN_WIDTH / 2 - mTryAgainButton->GetWidth() / 2, 700);
+}
+
 void GameManager::HandleEnemyDeath()
 {
+	mEnemySpawner->SpawnEnemy();
 	mEnemySpawner->SpawnEnemy();
 }
 
@@ -220,9 +250,9 @@ void GameManager::Restart()
 	SetToInitialState();
 }
 
-TextureManager * GameManager::GetTextureManager()
+TextureManager* const GameManager::GetTextureManager()
 {
-	return mTextureManager;
+	return mTextureManager.get();
 }
 
 void GameManager::HandleInput(SDL_Event& e)
@@ -270,8 +300,8 @@ void GameManager::HandleInput(SDL_Event& e)
 			if (e.button.button == SDL_BUTTON_LEFT)
 			{
 				// shoot
-				Bullet* bullet = mPlayerBulletPool->GetBullet();
-				bullet->Shoot(m_CursorPos, mouseDir);
+				//Bullet* bullet = mPlayerBulletPool->GetBullet();
+				mPlayerBulletPool->GetBullet()->Shoot(m_CursorPos, mouseDir);
 			}
 			if (e.button.button == SDL_BUTTON_RIGHT)
 			{
@@ -291,23 +321,27 @@ void GameManager::HandleInput(SDL_Event& e)
 			}
 		}
 
-		if (e.type == SDL_MOUSEBUTTONUP)
+		if (mIsGameOver)
 		{
-			if (e.button.button == SDL_BUTTON_LEFT)
+			if (e.type == SDL_MOUSEBUTTONUP)
 			{
-				float tryAgainBtnX = SCREEN_WIDTH / 2 - mTryAgainButton->GetWidth() / 2;
-				float tryAgainBtnY = 700;
-				//If the mouse is over the button 
-				if ((mouseX > tryAgainBtnX) &&
-					(mouseX <tryAgainBtnX + mTryAgainButton->GetWidth()) &&
-					(mouseY > tryAgainBtnY) &&
-					(mouseY < tryAgainBtnY + mTryAgainButton->GetHeight()) )
-				{ 
-					//Set the button sprite 
-					Restart();
+				if (e.button.button == SDL_BUTTON_LEFT)
+				{
+					float tryAgainBtnX = SCREEN_WIDTH / 2 - mTryAgainButton->GetWidth() / 2;
+					float tryAgainBtnY = 700;
+					//If the mouse is over the button 
+					if ((mouseX > tryAgainBtnX) &&
+						(mouseX <tryAgainBtnX + mTryAgainButton->GetWidth()) &&
+						(mouseY > tryAgainBtnY) &&
+						(mouseY < tryAgainBtnY + mTryAgainButton->GetHeight()))
+					{
+						//Set the button sprite 
+						Restart();
+					}
 				}
 			}
 		}
+		
 	}
 }
 
@@ -347,7 +381,7 @@ void GameManager::CheckCollisions()
 	// check if bullets have hit walls
 	for (Bullet* const &bullet : mPlayerBulletPool->GetPool())
 	{
-		for (Enemy*& enemy : mEnemies)
+		for (auto& enemy : mEnemies)
 		{
 			if (!bullet->IsActive())
 			{
