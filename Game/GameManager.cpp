@@ -91,14 +91,18 @@ void GameManager::CreateGameObjects()
 	{
 		auto enemy = std::make_unique<Enemy>(TextureType::Enemy, mPlayer.get(), mEnemyBulletPool.get());
 		mEnemies.push_back(std::move(enemy));
-		enemy->SetActive(false);
+		mEnemies[i]->SetActive(false);
 	}
 
 	mEnemySpawner = std::make_unique<EnemySpawner>(mEnemies);
 
 	// put all gameObjects into mGameObjects
-	mGameObjects.push_back(std::move(mPlayer));
-	mGameObjects.insert(mGameObjects.end(), mEnemies.begin(), mEnemies.end());
+	mGameObjects.push_back(mPlayer.get());
+	//mGameObjects.insert(mGameObjects.end(), mEnemies.begin(), mEnemies.end());
+	for (auto& enemy : mEnemies)
+	{
+		mGameObjects.push_back(enemy.get());
+	}
 
 	auto pBulletPool = mPlayerBulletPool->GetPool();
 	mGameObjects.insert(mGameObjects.end(), pBulletPool.begin(), pBulletPool.end());
@@ -117,10 +121,10 @@ void GameManager::Close()
 	mEnemySpawner.reset();
 	mEnemies.clear();
 
-	for(auto& g : mGameObjects)
-	{
-		g.reset();
-	}
+	//for(auto& g : mGameObjects)
+	//{
+	//	g.reset();
+	//}
 
 	//SDL_DestroyRenderer(mRenderer.get());
 	//SDL_DestroyWindow(mWindow.get());

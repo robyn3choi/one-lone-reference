@@ -51,7 +51,7 @@ private:
 	std::unique_ptr<TextureManager> mTextureManager = nullptr;
 	SDL_Rect mCamera;
 
-	std::vector<std::unique_ptr<GameObject>> mGameObjects;
+	std::vector<GameObject*> mGameObjects;
 	std::unique_ptr<Player> mPlayer = nullptr;
 	std::vector<std::unique_ptr<Enemy>> mEnemies;
 	std::unique_ptr<BulletPool> mPlayerBulletPool = nullptr;

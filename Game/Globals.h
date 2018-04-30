@@ -8,7 +8,7 @@ const int LEVEL_WIDTH = 2800;
 const int LEVEL_HEIGHT = 1800;
 const int TILE_WIDTH = 100;
 
-const float PLAYER_SPEED = 600;
+const float PLAYER_SPEED = 400;
 const int PLAYER_BULLET_SPEED = 3000;
 const int PLAYER_BULLET_POOL_SIZE = 32;
 const int PLAYER_HEALTH = 10;
