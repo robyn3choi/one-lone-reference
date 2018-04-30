@@ -1,7 +1,7 @@
 #include "Precompiled.h"
 #include "TextureManager.h"
 
-TextureManager::TextureManager(SDL_Renderer*& renderer) :
+TextureManager::TextureManager(SDL_Renderer* renderer) :
 	mRenderer(renderer)
 {
 	LoadTextures();

@@ -2,7 +2,7 @@
 #include "EnemySpawner.h"
 
 
-EnemySpawner::EnemySpawner(std::vector<Enemy*>& enemies) :
+EnemySpawner::EnemySpawner(std::vector<std::unique_ptr<Enemy>>& enemies) :
 	mEnemies(enemies)
 {
 }
@@ -41,7 +41,7 @@ bool EnemySpawner::SpawnEnemy()
 
 void EnemySpawner::Reset()
 {
-	for (Enemy* enemy : mEnemies)
+	for (auto& enemy : mEnemies)
 	{
 		enemy->Reset();
 	}

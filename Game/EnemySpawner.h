@@ -4,7 +4,7 @@
 class EnemySpawner
 {
 public:
-	EnemySpawner(std::vector<Enemy*>& enemies);
+	EnemySpawner(std::vector<std::unique_ptr<Enemy>>& enemies);
 	~EnemySpawner();
 
 	void SpawnInitialEnemies();
@@ -14,7 +14,7 @@ public:
 	void Reset();
 
 private:
-	std::vector<Enemy*>& mEnemies;
+	std::vector<std::unique_ptr<Enemy>>& mEnemies;
 	int mEnemyIndex = 0;
 };
 

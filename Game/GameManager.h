@@ -46,8 +46,8 @@ private:
 	void UpdateAndRenderGameObjects(float deltaTime);
 	void RenderGameOverUI();
 
-	std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> mWindow = nullptr;
-	std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> mRenderer = nullptr;
+	std::unique_ptr<SDL_Window, SDLWindowDestroyer> mWindow = nullptr;
+	std::unique_ptr<SDL_Renderer, SDLRendererDestroyer> mRenderer = nullptr;
 	std::unique_ptr<TextureManager> mTextureManager = nullptr;
 	SDL_Rect mCamera;
 
@@ -63,6 +63,6 @@ private:
 	Vector2 m_CursorPos;
 
 	std::unique_ptr<Texture> mTryAgainButton;
-	std::unique_ptr<Texture> mGroundTexture = nullptr;
+	Texture* mGroundTexture = nullptr;
 };
 

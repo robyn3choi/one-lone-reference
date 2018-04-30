@@ -22,7 +22,7 @@ bool GameManager::Initialize()
 
 	//SDL_SetRelativeMouseMode(SDL_TRUE);
 	srand(time(NULL));
-	mTextureManager = std::make_unique<TextureManager>(mRenderer);
+	mTextureManager = std::make_unique<TextureManager>(mRenderer.get());
 	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	return true;
@@ -38,13 +38,13 @@ void GameManager::InitializeSDL()
 
 void GameManager::CreateWindow()
 {
-	//mWindow = std::make_unique<SDL_Window>(SDL_CreateWindow("One Lone Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,
-	//	SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED), SDL_DestroyWindow);
+	mWindow = std::unique_ptr<SDL_Window, SDLWindowDestroyer>(SDL_CreateWindow("One Lone Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,
+		SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED));
 
-	std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow("One Lone Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED), SDL_DestroyWindow);
-	
-	mWindow = std::move(window);
+	//std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow("One Lone Reference", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,
+	//	SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED), SDL_DestroyWindow);
+	//
+	//mWindow = std::move(window);
 
 	if (mWindow == nullptr)
 	{
@@ -54,13 +54,13 @@ void GameManager::CreateWindow()
 
 void GameManager::CreateRenderer()
 {
-	//mRenderer = std::make_unique<SDL_Renderer>(SDL_CreateRenderer(mWindow.get(), -1, 
-	//	SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyWindow);
+	mRenderer = std::unique_ptr<SDL_Renderer, SDLRendererDestroyer>(SDL_CreateRenderer(mWindow.get(), -1,
+		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
 
-	std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(mWindow.get(), -1,
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
+	//std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(mWindow.get(), -1,
+	//	SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
 
-	mRenderer = std::move(renderer);
+	//mRenderer = std::move(renderer);
 
 	if (mRenderer == nullptr)
 	{
@@ -81,15 +81,16 @@ void GameManager::InitializeSDLImage()
 
 void GameManager::CreateGameObjects()
 {
-	mPlayer = std::make_unique<Player>(new Player(TextureType::Player));
+	mPlayer = std::make_unique<Player>(TextureType::Player);
+	//mPlayer = std::unique_ptr<Player>(new Player(TextureType::Player));
 
-	mPlayerBulletPool = std::make_unique<BulletPool>(PLAYER_BULLET_POOL_SIZE, TextureType::PlayerBullet, PLAYER_BULLET_SPEED, false);
+	mPlayerBulletPool = std::make_unique<BulletPool>(PLAYER_BULLET_POOL_SIZE, TextureType::PlayerBullet, static_cast<float>(PLAYER_BULLET_SPEED), false);
 	mEnemyBulletPool = std::make_unique<BulletPool>(ENEMY_BULLET_POOL_SIZE,  TextureType::EnemyBullet, ENEMY_BULLET_SPEED, true);
 
 	for (int i = 0; i < NUM_ENEMIES; i++)
 	{
 		auto enemy = std::make_unique<Enemy>(TextureType::Enemy, mPlayer.get(), mEnemyBulletPool.get());
-		mEnemies.push_back(enemy);
+		mEnemies.push_back(std::move(enemy));
 		enemy->SetActive(false);
 	}
 
@@ -106,13 +107,12 @@ void GameManager::CreateGameObjects()
 	mGameObjects.insert(mGameObjects.end(), eBulletPool.begin(), eBulletPool.end());
 
 	// environment
-	mGroundTexture = std::make_unique<Texture>(std::move(mTextureManager->GetTexture(TextureType::Ground)));
+	mGroundTexture = mTextureManager->GetTexture(TextureType::Ground);
 }
 
 
 void GameManager::Close()
 {
-	mTextureManager.reset();
 	mTextureManager.reset();
 	mEnemySpawner.reset();
 	mEnemies.clear();
@@ -177,7 +177,8 @@ void GameManager::Run()
 
 void GameManager::SetToInitialState()
 {
-	mPlayer->SetPosition(Vector2(20, 1));
+	Vector2 initialPos(20, 1);
+	mPlayer->SetPosition(initialPos);
 	mEnemySpawner->SpawnInitialEnemies();
 }
 
