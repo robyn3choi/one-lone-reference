@@ -28,8 +28,8 @@ void Player::Update(float deltaTime)
 
 	// TODO: refactor?
 	Texture* tex = GameManager::Instance().GetTextureManager()->GetTexture(TextureType::Player);
-	float texWidth = tex->GetWidth();
-	float texHeight = tex->GetHeight();
+	float texWidth = static_cast<float>(tex->GetWidth());
+	float texHeight = static_cast<float>(tex->GetHeight());
 
 	float nextX = mPosition.x + mVelocity.x * deltaTime;
 	float nextY = mPosition.y + mVelocity.y * deltaTime;
@@ -37,12 +37,12 @@ void Player::Update(float deltaTime)
 	if (nextX <= LEVEL_WIDTH - texWidth && nextX >= 0)
 	{
 		mPosition.x = nextX;
-		mCollider.x = mPosition.x;
+		mCollider.x = static_cast<int>(mPosition.x);
 	}
 	if (nextY <= LEVEL_HEIGHT - texHeight && nextY >= 0)
 	{
 		mPosition.y = nextY;
-		mCollider.y = mPosition.y;
+		mCollider.y = static_cast<int>(mPosition.y);
 	}
 }
 

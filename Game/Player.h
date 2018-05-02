@@ -17,7 +17,7 @@ public:
 
 private:
 	float mSpeed = PLAYER_SPEED;
-	float mHealth = PLAYER_HEALTH;
+	int mHealth = PLAYER_HEALTH;
 	bool mIsFiring = false;
 	float mFireTimer = PLAYER_FIRE_RATE;
 	bool mIsDashing = false;

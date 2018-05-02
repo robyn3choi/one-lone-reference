@@ -5,11 +5,40 @@ Vector2::Vector2()
 }
 
 Vector2::Vector2(float newX, float newY) :
-	x(newX),
-	y(newY)
+	x(newX), y(newY)
 {
 }
 
+Vector2::Vector2(const Vector2 & other) :
+	x(other.x), y(other.y)
+{
+}
+
+Vector2::Vector2(Vector2 && other) :
+	x(other.x), y(other.y)
+{
+	other.x = 0;
+	other.y = 0;
+}
+
+Vector2 & Vector2::operator=(const Vector2 & rhs)
+{
+	x = rhs.x;
+	y = rhs.y;
+	return *this;
+}
+
+Vector2 & Vector2::operator=(Vector2 && rhs)
+{
+	if (*this != rhs)
+	{
+		x = rhs.x;
+		y = rhs.y;
+		rhs.x = 0;
+		rhs.y = 0;
+	}
+	return *this;
+}
 
 Vector2::~Vector2()
 {
@@ -32,6 +61,16 @@ void Vector2::Normalize()
 		x /= length;
 		y /= length;
 	}
+}
+
+bool Vector2::operator==(const Vector2 & rhs) const
+{
+	return rhs.x == x && rhs.y == y;
+}
+
+bool Vector2::operator!=(const Vector2 & rhs) const
+{
+	return rhs.x != x || rhs.y != y;
 }
 
 void Vector2::operator+=(const Vector2 & rhs)

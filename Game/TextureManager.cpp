@@ -32,7 +32,7 @@ void TextureManager::LoadTextures()
 		"Images/TryAgainButton.png"
 	};
 
-	for (int i = 0; i < mPaths.size(); i++)
+	for (size_t i = 0; i < mPaths.size(); i++)
 	{
 		Texture* t = new Texture(mRenderer);
 		t->LoadFromFile(mPaths[i]);

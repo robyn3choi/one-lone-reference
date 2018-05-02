@@ -9,16 +9,16 @@ const int LEVEL_HEIGHT = 1800;
 const int TILE_WIDTH = 100;
 
 const float PLAYER_SPEED = 400;
-const int PLAYER_BULLET_SPEED = 3000;
+const float PLAYER_BULLET_SPEED = 3000;
 const int PLAYER_BULLET_POOL_SIZE = 32;
 const int PLAYER_HEALTH = 10;
-const float PLAYER_FIRE_RATE = 0.4;
+const float PLAYER_FIRE_RATE = 0.4f;
 const float DASH_TIME = 0.1f;
 const float DASH_SPEED = 3000;
 const float CURSOR_RADIUS = 100;
 
 const float ENEMY_SPEED = 150;
-const int ENEMY_BULLET_SPEED = 400;
+const float ENEMY_BULLET_SPEED = 400;
 const int ENEMY_BULLET_POOL_SIZE = 50;
 const int ENEMY_HEALTH = 3;
 const int NUM_ENEMIES = 12;

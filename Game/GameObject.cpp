@@ -37,8 +37,8 @@ const Vector2& GameObject::GetPosition() const
 void GameObject::SetPosition(Vector2& position)
 {
 	mPosition = position;
-	mCollider.x = mPosition.x;
-	mCollider.y = mPosition.y;
+	mCollider.x = static_cast<int>(mPosition.x);
+	mCollider.y = static_cast<int>(mPosition.y);
 }
 
 void GameObject::SetVelocity(Vector2& velocity)

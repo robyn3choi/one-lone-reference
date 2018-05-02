@@ -32,7 +32,7 @@ public:
 	void HandlePlayerDeath();
 	void Restart();
 	TextureManager* const GetTextureManager();
-	bool IsOutOfBounds(Vector2 pos, float width, float height);
+	bool IsOutOfBounds(Vector2 pos, int width, int height);
 
 private:
 	GameManager();
@@ -40,7 +40,7 @@ private:
 	void CheckCollisions();
 	void KeepCameraInBounds();
 	void SetToInitialState();
-	void CenterCameraOverPlayer(float playerWidth, float playerHeight);
+	void CenterCameraOverPlayer(int playerWidth, int playerHeight);
 	void RenderTiledGround();
 	float GetDeltaTime(float& timeAtPreviousFrame);
 	void UpdateAndRenderGameObjects(float deltaTime);

@@ -34,8 +34,8 @@ void Enemy::Update(float deltaTime)
 	}
 
 	mPosition += mVelocity * deltaTime;
-	mCollider.x = mPosition.x;
-	mCollider.y = mPosition.y;
+	mCollider.x = static_cast<int>(mPosition.x);
+	mCollider.y = static_cast<int>(mPosition.y);
 
 	mFireTimer -= deltaTime;
 	if (mFireTimer <= 0)
@@ -61,10 +61,10 @@ void Enemy::Spawn()
 	int randomFactor = rand() % 5;
 	mDistanceFromPlayer = ENEMY_DISTANCE_FROM_PLAYER + (float)(randomFactor * 100);
 
-	float randomX = rand() % LEVEL_WIDTH;
-	float randomY = rand() % LEVEL_HEIGHT;
-	mPosition.x = randomX;
-	mPosition.y = randomY;
+	int randomX = rand() % LEVEL_WIDTH;
+	int randomY = rand() % LEVEL_HEIGHT;
+	mPosition.x = static_cast<float>(randomX);
+	mPosition.y = static_cast<float>(randomY);
 }
 
 void Enemy::Reset()

@@ -18,7 +18,7 @@ void EnemySpawner::SpawnInitialEnemies()
 
 	for (int i = 1; i < NUM_INITIAL_ENEMIES;i++)
 	{
-		SDL_TimerID timerID = SDL_AddTimer(500 * i, SpawnEnemyCallback, this);
+		SDL_AddTimer(500 * i, SpawnEnemyCallback, this);
 	}
 }
 
@@ -30,7 +30,7 @@ Uint32 EnemySpawner::SpawnEnemyCallback(Uint32 interval, void* param)
 
 bool EnemySpawner::SpawnEnemy()
 {
-	if (mEnemyIndex == mEnemies.size())
+	if (mEnemyIndex == static_cast<int>(mEnemies.size()))
 	{
 		return false;
 	}

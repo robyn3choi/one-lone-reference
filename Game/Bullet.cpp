@@ -17,8 +17,8 @@ void Bullet::Shoot(Vector2 startPos, Vector2 dir)
 {
 	dir.Normalize();
 	mPosition = startPos;
-	mCollider.x = mPosition.x;
-	mCollider.y = mPosition.y;
+	mCollider.x = static_cast<int>(mPosition.x);
+	mCollider.y = static_cast<int>(mPosition.y);
 	mVelocity = dir * mSpeed;
 }
 
@@ -30,6 +30,6 @@ void Bullet::Update(float deltaTime)
 	}
 
 	mPosition += mVelocity * deltaTime;
-	mCollider.x = mPosition.x;
-	mCollider.y = mPosition.y;
+	mCollider.x = static_cast<int>(mPosition.x);
+	mCollider.y = static_cast<int>(mPosition.y);
 }
