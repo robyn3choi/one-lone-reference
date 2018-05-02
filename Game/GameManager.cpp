@@ -93,13 +93,13 @@ void GameManager::CreateGameObjects()
 		mGameObjects.push_back(enemy.get());
 	}
 
-	auto playerBulletPool = mPlayerBulletPool->GetPool();
+	decltype(auto) playerBulletPool = mPlayerBulletPool->GetPool();
 	for (auto& bullet : playerBulletPool)
 	{
 		mGameObjects.push_back(bullet.get());
 	}
 
-	auto enemyBulletPool = mEnemyBulletPool->GetPool();
+	decltype(auto) enemyBulletPool = mEnemyBulletPool->GetPool();
 	for (auto& bullet : enemyBulletPool)
 	{
 		mGameObjects.push_back(bullet.get());
