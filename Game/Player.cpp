@@ -68,10 +68,6 @@ void Player::Dash(Vector2 dir)
 	mVelocity = DASH_SPEED * dir;
 }
 
-bool Player::IsDashing()
-{
-	return mIsDashing;
-}
 
 void Player::Reset()
 {

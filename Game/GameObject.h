@@ -8,15 +8,16 @@ public:
 	virtual ~GameObject();
 
 	virtual void Update(float deltaTime) = 0;
-	void SetActive(bool active);
-	bool IsActive();
-	const Vector2& GetPosition() const;
-	const Vector2& GetVelocity() const;
-	void SetPosition(Vector2& position);
-	void SetVelocity(Vector2& velocity);
-	const SDL_Rect GetCollider() const;
-	TextureType GetTextureType() const;
-
+	virtual void Reset() = 0;
+	void SetActive(bool active) { mIsActive = active; }
+	bool IsActive() const { return mIsActive; }
+	const Vector2& GetPosition() const { return mPosition; }
+	const Vector2& GetVelocity() const { return mVelocity; }
+	void SetPosition(Vector2 position);
+	void SetVelocity(Vector2& velocity) { mVelocity = velocity; }
+	const SDL_Rect GetCollider() const { return mCollider; }
+	TextureType GetTextureType() const { return mTextureType; }
+	
 protected:
 	SDL_Rect mCollider;
 	Vector2 mPosition;

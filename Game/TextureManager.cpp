@@ -22,14 +22,15 @@ void TextureManager::LoadTextures()
 {
 	mPaths = {
 		"Images/bg.png",
-		"Images/testImage.png",
-		"Images/cursor.png",
-		"Images/testImage.png",
-		"Images/cursor.png",
+		"Images/reference.png",
+		"Images/playerBullet.png",
+		"Images/pointer.png",
+		"Images/enemyBullet.png",
 		"Images/bricks2.png",
-		"Images/circle.png",
+		"Images/crosshair.png",
 		"Images/GameOverText.png",
-		"Images/TryAgainButton.png"
+		"Images/TryAgainButton.png",
+		"Images/heart.png"
 	};
 
 	for (size_t i = 0; i < mPaths.size(); i++)

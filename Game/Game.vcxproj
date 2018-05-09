@@ -99,7 +99,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Externals\SDL2\lib\x86;$(SolutionDir)Externals\SDL2_ttf\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OutputFile>..\_Build\$(PlatformShortName)\$(Configuration)\$(ProjectName)$(TargetExt)</OutputFile>
     </Link>
     <PostBuildEvent>
@@ -178,9 +178,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
+    <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="BulletPool.cpp" />
@@ -197,10 +199,12 @@
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Boss.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Exceptions.h" />
+    <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="BulletPool.h" />

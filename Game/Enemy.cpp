@@ -20,27 +20,13 @@ void Enemy::Update(float deltaTime)
 	{
 		return;
 	}
-
 	Vector2 vectorToPlayer = mPlayer->GetPosition() - mPosition;
 
-	if (vectorToPlayer.GetLength() > mDistanceFromPlayer)
-	{
-		vectorToPlayer.Normalize();
-		mVelocity = vectorToPlayer * mSpeed;
-	}
-	else
-	{
-		mVelocity = Vector2(0, 0);
-	}
-
-	mPosition += mVelocity * deltaTime;
-	mCollider.x = static_cast<int>(mPosition.x);
-	mCollider.y = static_cast<int>(mPosition.y);
+	MoveTowardPlayer(deltaTime, vectorToPlayer);
 
 	mFireTimer -= deltaTime;
 	if (mFireTimer <= 0)
 	{
-		//Bullet* bullet = mBulletPool->GetBullet();
 		mBulletPool->GetBullet()->Shoot(mPosition, vectorToPlayer);
 		mFireTimer = ENEMY_FIRE_RATE;
 	}
@@ -58,13 +44,27 @@ void Enemy::TakeDamage()
 void Enemy::Spawn()
 {
 	mIsActive = true;
-	int randomFactor = rand() % 5;
-	mDistanceFromPlayer = ENEMY_DISTANCE_FROM_PLAYER + (float)(randomFactor * 100);
-
 	int randomX = rand() % LEVEL_WIDTH;
 	int randomY = rand() % LEVEL_HEIGHT;
 	mPosition.x = static_cast<float>(randomX);
 	mPosition.y = static_cast<float>(randomY);
+}
+
+void Enemy::MoveTowardPlayer(float deltaTime, Vector2& vectorToPlayer)
+{
+	if (vectorToPlayer.GetLength() > ENEMY_DISTANCE_FROM_PLAYER)
+	{
+		vectorToPlayer.Normalize();
+		mVelocity = vectorToPlayer * mSpeed;
+	}
+	else
+	{
+		mVelocity = Vector2(0, 0);
+	}
+
+	mPosition += mVelocity * deltaTime;
+	mCollider.x = static_cast<int>(mPosition.x);
+	mCollider.y = static_cast<int>(mPosition.y);
 }
 
 void Enemy::Reset()

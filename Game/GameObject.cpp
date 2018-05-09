@@ -14,44 +14,9 @@ GameObject::~GameObject()
 {
 }
 
-void GameObject::SetActive(bool active)
+void GameObject::SetPosition(Vector2 position)
 {
-	mIsActive = active;
-}
-
-bool GameObject::IsActive()
-{
-	return mIsActive;
-}
-
-const Vector2& GameObject::GetVelocity() const
-{
-	return mVelocity;
-}
-
-const Vector2& GameObject::GetPosition() const
-{
-	return mPosition;
-}
-
-void GameObject::SetPosition(Vector2& position)
-{
-	mPosition = position;
+	mPosition = std::move(position);
 	mCollider.x = static_cast<int>(mPosition.x);
 	mCollider.y = static_cast<int>(mPosition.y);
-}
-
-void GameObject::SetVelocity(Vector2& velocity)
-{
-	mVelocity = velocity;
-}
-
-const SDL_Rect GameObject::GetCollider() const
-{
-	return mCollider;
-}
-
-TextureType GameObject::GetTextureType() const
-{
-	return mTextureType;
 }

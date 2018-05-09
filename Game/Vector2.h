@@ -1,4 +1,6 @@
 #pragma once
+#include <math.h>
+
 class Vector2
 {
 public:
@@ -15,6 +17,7 @@ public:
 
 	float GetLength() const;
 	void Normalize();
+	void RotateCounterClockwise(float degrees);
 	bool operator==(const Vector2& rhs) const;
 	bool operator!=(const Vector2& rhs) const;
 	void operator+=(const Vector2& rhs);

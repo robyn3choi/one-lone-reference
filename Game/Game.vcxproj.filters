@@ -15,6 +15,8 @@
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
+    <ClCompile Include="GameLoop.cpp" />
+    <ClCompile Include="Boss.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled">
@@ -38,5 +40,7 @@
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="SDLDeleters.h" />
+    <ClInclude Include="GameLoop.h" />
+    <ClInclude Include="Boss.h" />
   </ItemGroup>
 </Project>

@@ -12,8 +12,12 @@ public:
 	void Shoot(Vector2 startPos, Vector2 dir);
 
 private:
+	bool IsOutOfBounds();
+	void Reset();
+
 	Vector2 mVelocity;
 	const float mSpeed;
 	bool mHurtsPlayer;
+	float mSecondsLeftUntilSelfDestruct = BULLET_LIFETIME;
 };
 

@@ -8,7 +8,7 @@ BulletPool::BulletPool(const int size, TextureType textureType, const float spee
 	{
 		auto bullet = std::make_unique<Bullet>(textureType, speed, hurtsPlayer);
 		mPool.push_back(std::move(bullet));
-		bullet->SetActive(false);
+		mPool[i]->SetActive(false);
 	}
 }
 
@@ -28,15 +28,5 @@ Bullet* BulletPool::GetBullet()
 	}
 	printf("ran out of bullets!");
 	return nullptr;
-}
-
-void BulletPool::ReturnBullet(Bullet* bullet)
-{
-	bullet->SetActive(false);
-}
-
-const std::vector<std::unique_ptr<Bullet>>& BulletPool::GetPool() const
-{
-	return mPool;
 }
 

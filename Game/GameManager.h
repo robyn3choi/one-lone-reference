@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "BulletPool.h"
 #include "Enemy.h"
+#include "Boss.h"
 #include "Player.h"
 #include "EnemySpawner.h"
 #include "SDLDeleters.h"
@@ -31,20 +32,22 @@ public:
 	void HandleEnemyDeath();
 	void HandlePlayerDeath();
 	void Restart();
-	TextureManager* const GetTextureManager();
-	bool IsOutOfBounds(Vector2 pos, int width, int height);
+	void Win();
+	TextureManager* const GetTextureManager() const { return mTextureManager.get(); }
+	SDL_Renderer* const GetRenderer() const { return mRenderer.get(); }
+	bool IsGameOver() const { return mIsGameOver; }
 
 private:
 	GameManager();
 	void HandleInput(SDL_Event& e);
-	void CheckCollisions();
-	void KeepCameraInBounds();
-	void SetToInitialState();
-	void CenterCameraOverPlayer(int playerWidth, int playerHeight);
+	void CheckCollisions();	
+	void CenterCameraOverPlayer();
 	void RenderTiledGround();
 	float GetDeltaTime(float& timeAtPreviousFrame);
 	void UpdateAndRenderGameObjects(float deltaTime);
 	void RenderGameOverUI();
+	void RenderHearts();
+	void SetToInitialState();
 
 	std::unique_ptr<SDL_Window, SDLWindowDestroyer> mWindow = nullptr;
 	std::unique_ptr<SDL_Renderer, SDLRendererDestroyer> mRenderer = nullptr;
@@ -57,12 +60,11 @@ private:
 	std::unique_ptr<BulletPool> mPlayerBulletPool = nullptr;
 	std::unique_ptr<BulletPool> mEnemyBulletPool = nullptr;
 	std::unique_ptr<EnemySpawner> mEnemySpawner = nullptr;
+	std::unique_ptr<Boss> mBoss = nullptr;
 
-	bool mIsGameRunning;
+	bool mIsGameRunning = false;
 	bool mIsGameOver = false;
+	bool mHasReachedBoss = false;
 	Vector2 m_CursorPos;
-
-	std::unique_ptr<Texture> mTryAgainButton;
-	Texture* mGroundTexture = nullptr;
 };
 

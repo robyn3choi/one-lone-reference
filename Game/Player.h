@@ -12,8 +12,9 @@ public:
 	void Move(Vector2 dir);
 	void TakeDamage();
 	void Dash(Vector2 dir);
-	bool IsDashing();
-	void Reset();
+	virtual void Reset() override;
+	int GetHealth() { return mHealth; }
+	bool IsDashing() { return mIsDashing; }
 
 private:
 	float mSpeed = PLAYER_SPEED;

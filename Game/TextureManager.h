@@ -11,9 +11,10 @@ enum class TextureType
 	Enemy,
 	EnemyBullet,
 	Ground,
-	Cursor,
+	Crosshair,
 	GameOverText,
-	TryAgainButton
+	TryAgainButton,
+	Heart
 };
 
 enum class TTFTextureType

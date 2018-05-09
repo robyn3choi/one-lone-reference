@@ -63,6 +63,19 @@ void Vector2::Normalize()
 	}
 }
 
+void Vector2::RotateCounterClockwise(float degrees)
+{
+	float radians = degrees * static_cast<float>(M_PI) / 180;
+	float cos = std::cos(radians);
+	float sin = std::sin(radians);
+
+	float oldX = x;
+	float oldY = y;
+
+	x = oldX * cos - y * sin;
+	y = oldX * sin + oldY * cos;
+}
+
 bool Vector2::operator==(const Vector2 & rhs) const
 {
 	return rhs.x == x && rhs.y == y;
