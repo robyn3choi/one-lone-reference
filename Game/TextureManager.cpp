@@ -30,7 +30,10 @@ void TextureManager::LoadTextures()
 		"Images/crosshair.png",
 		"Images/GameOverText.png",
 		"Images/TryAgainButton.png",
-		"Images/heart.png"
+		"Images/heart.png",
+		"Images/boss.png",
+		"Images/deadBoss.png",
+		"Images/cryingReference.png",
 	};
 
 	for (size_t i = 0; i < mPaths.size(); i++)

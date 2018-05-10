@@ -14,7 +14,10 @@ enum class TextureType
 	Crosshair,
 	GameOverText,
 	TryAgainButton,
-	Heart
+	Heart,
+	Boss,
+	DeadBoss,
+	CryingPlayer
 };
 
 enum class TTFTextureType

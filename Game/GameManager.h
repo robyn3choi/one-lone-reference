@@ -40,7 +40,7 @@ public:
 private:
 	GameManager();
 	void HandleInput(SDL_Event& e);
-	void CheckCollisions();	
+	void CheckCollisions();
 	void CenterCameraOverPlayer();
 	void RenderTiledGround();
 	float GetDeltaTime(float& timeAtPreviousFrame);
@@ -48,6 +48,7 @@ private:
 	void RenderGameOverUI();
 	void RenderHearts();
 	void SetToInitialState();
+	void SpawnBoss();
 
 	std::unique_ptr<SDL_Window, SDLWindowDestroyer> mWindow = nullptr;
 	std::unique_ptr<SDL_Renderer, SDLRendererDestroyer> mRenderer = nullptr;

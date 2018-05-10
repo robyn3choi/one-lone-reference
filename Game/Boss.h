@@ -16,6 +16,7 @@ private:
 	void ShootAtPlayer(float deltaTime);
 	void Spiral(float deltaTime);
 	void MoveTowardPlayer(float deltaTime);
+	void ShootFromBodyCenter(Vector2 direction);
 
 	enum class AttackPattern {
 		ShootAtPlayer,

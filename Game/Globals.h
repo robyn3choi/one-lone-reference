@@ -22,17 +22,18 @@ const float ENEMY_SPEED = 250;
 const float ENEMY_BULLET_SPEED = 450;
 const int ENEMY_BULLET_POOL_SIZE = 250;
 const int ENEMY_HEALTH = 3;
-const int NUM_ENEMIES = 20;
+const int NUM_ENEMIES = 8;
 const float ENEMY_FIRE_RATE = 1;
 const float ENEMY_DISTANCE_FROM_PLAYER = 400;
 const int NUM_INITIAL_ENEMIES = 3;
+const int ENEMY_WAVE_SIZE = 2;
 
 const float BOSS_SPEED = 150;
 const int BOSS_BULLET_SPEED = 350;
-const float BOSS_FIRE_RATE = 0.2f;
-const float BOSS_ROTATION_SPEED = 60;
+const float BOSS_FIRE_RATE = 0.35f;
+const float BOSS_ROTATION_SPEED = 40;
 const int BOSS_HEALTH = 50;
-const float BOSS_ATTACK_DURATION = 10;
+const float BOSS_ATTACK_DURATION = 8;
 const float BOSS_PAUSE_DURATION = 3;
-
+const Vector2 INITIAL_BOSS_POSITION = Vector2(800, 800);
 

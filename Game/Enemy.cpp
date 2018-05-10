@@ -70,5 +70,7 @@ void Enemy::MoveTowardPlayer(float deltaTime, Vector2& vectorToPlayer)
 void Enemy::Reset()
 {
 	mHealth = ENEMY_HEALTH;
+	mFireTimer = ENEMY_FIRE_RATE;
+	mIsFiring = false;
 	SetActive(false);
 }

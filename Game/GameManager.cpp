@@ -86,7 +86,8 @@ void GameManager::CreateGameObjects()
 
 	mEnemySpawner = std::make_unique<EnemySpawner>(mEnemies);
 
-	mBoss = std::make_unique<Boss>(TextureType::Enemy, mPlayer.get(), mEnemyBulletPool.get());
+	mBoss = std::make_unique<Boss>(TextureType::Boss, mPlayer.get(), mEnemyBulletPool.get());
+	mBoss->SetActive(false);
 
 	// put all gameObjects into mGameObjects
 
@@ -138,9 +139,6 @@ void GameManager::Run()
 
 	SetToInitialState();
 
-	mBoss->SetActive(true);
-	mBoss->SetPosition(Vector2(100, 100));
-
 	while (mIsGameRunning)
 	{
 		HandleInput(e);
@@ -175,7 +173,12 @@ void GameManager::SetToInitialState()
 {
 	Vector2 initialPos(LEVEL_WIDTH/2, LEVEL_HEIGHT/2);
 	mPlayer->SetPosition(initialPos);
-	//mEnemySpawner->SpawnInitialEnemies();
+	mBoss->SetPosition(INITIAL_BOSS_POSITION);
+
+	if (!mHasReachedBoss)
+	{
+		mEnemySpawner->SpawnInitialEnemies();
+	}
 }
 
 void GameManager::CenterCameraOverPlayer()
@@ -250,8 +253,31 @@ void GameManager::RenderHearts()
 
 void GameManager::HandleEnemyDeath()
 {
-	mEnemySpawner->SpawnEnemy();
-	mEnemySpawner->SpawnEnemy();
+	bool areAnyEnemiesActive = false;
+	for (auto& enemy : mEnemies)
+	{
+		if (enemy->IsActive())
+		{
+			areAnyEnemiesActive = true;
+			break;
+		}
+	}
+
+	if (areAnyEnemiesActive || mEnemySpawner->AreThereEnemiesLeft())
+	{
+		mEnemySpawner->SpawnEnemyWave();
+	}
+	else
+	{
+		SpawnBoss();
+	}
+}
+
+void GameManager::SpawnBoss()
+{
+	mBoss->SetPosition(Vector2(static_cast<int>(LEVEL_WIDTH/2), static_cast<int>(LEVEL_HEIGHT/2)));
+	mBoss->SetActive(true);
+	mHasReachedBoss = true;
 }
 
 void GameManager::HandlePlayerDeath()
@@ -264,6 +290,7 @@ void GameManager::Restart()
 {
 	mIsGameOver = false;
 	mPlayer->Reset();
+	mBoss->Reset();
 	mEnemySpawner->Reset();
 	SetToInitialState();
 }
@@ -317,7 +344,6 @@ void GameManager::HandleInput(SDL_Event& e)
 			if (e.button.button == SDL_BUTTON_LEFT)
 			{
 				// shoot
-				//Bullet* bullet = mPlayerBulletPool->GetBullet();
 				mPlayerBulletPool->GetBullet()->Shoot(mPlayer->GetPosition(), mouseDir);
 			}
 			if (e.button.button == SDL_BUTTON_RIGHT)
@@ -366,7 +392,6 @@ void GameManager::HandleInput(SDL_Event& e)
 void GameManager::CheckCollisions()
 {
 	// check if player has been hit by enemy bullets 
-	// check if bullets have hit walls
 	for (auto &bullet : mEnemyBulletPool->GetPool())
 	{
 		if (!bullet->IsActive())
@@ -385,27 +410,39 @@ void GameManager::CheckCollisions()
 		}
 	}
 
-	// check if enemies have been hit by player bullets
-	// check if bullets have hit walls
 	for (auto &bullet : mPlayerBulletPool->GetPool())
 	{
 		if (!bullet->IsActive())
 		{
 			continue;
 		}
-		for (auto& enemy : mEnemies)
+		if (mHasReachedBoss)
 		{
-			if (!enemy->IsActive())
-			{
-				continue;
-			}
-			SDL_Rect enemyCollider = enemy->GetCollider();
+			// check if boss has been hit by player bullets
+			SDL_Rect bossCollider = mBoss->GetCollider();
 			SDL_Rect bulletCollider = bullet->GetCollider();
-			if (SDL_HasIntersection(&enemyCollider, &bulletCollider))
+			if (SDL_HasIntersection(&bossCollider, &bulletCollider))
 			{
-				enemy->TakeDamage();
+				mBoss->TakeDamage();
 				bullet->SetActive(false);
-				std::cout << "enemy damaged" << std::endl;
+			}
+		}
+		else
+		{
+			// check if enemies have been hit by player bullets
+			for (auto& enemy : mEnemies)
+			{
+				if (!enemy->IsActive())
+				{
+					continue;
+				}
+				SDL_Rect enemyCollider = enemy->GetCollider();
+				SDL_Rect bulletCollider = bullet->GetCollider();
+				if (SDL_HasIntersection(&enemyCollider, &bulletCollider))
+				{
+					enemy->TakeDamage();
+					bullet->SetActive(false);
+				}
 			}
 		}
 	}

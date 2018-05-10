@@ -10,7 +10,9 @@ public:
 	void SpawnInitialEnemies();
 	// must be static to be a callback for SDL_Timer
 	static Uint32 SpawnEnemyCallback(Uint32 interval, void* param);
-	bool SpawnEnemy();
+	void SpawnEnemy();
+	void SpawnEnemyWave();
+	bool AreThereEnemiesLeft() const { return (mEnemyIndex < mEnemies.size()); }
 	void Reset();
 
 private:

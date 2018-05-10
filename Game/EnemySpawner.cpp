@@ -28,15 +28,22 @@ Uint32 EnemySpawner::SpawnEnemyCallback(Uint32 interval, void* param)
 	return 0;
 }
 
-bool EnemySpawner::SpawnEnemy()
+void EnemySpawner::SpawnEnemy()
 {
 	if (mEnemyIndex == static_cast<int>(mEnemies.size()))
 	{
-		return false;
+		return;
 	}
 	mEnemies[mEnemyIndex]->Spawn();
 	mEnemyIndex++;
-	return true;
+}
+
+void EnemySpawner::SpawnEnemyWave()
+{
+	for (int i = 0; i < ENEMY_WAVE_SIZE; i++)
+	{
+		SpawnEnemy();
+	}
 }
 
 void EnemySpawner::Reset()

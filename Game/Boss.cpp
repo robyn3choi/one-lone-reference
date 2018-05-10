@@ -68,6 +68,9 @@ void Boss::Update(float deltaTime)
 void Boss::Reset()
 {
 	mHealth = BOSS_HEALTH;
+	mFireTimer = BOSS_FIRE_RATE;
+	mAttackTimer = BOSS_ATTACK_DURATION;
+	mPauseTimer = BOSS_PAUSE_DURATION;
 }
 
 void Boss::TakeDamage()
@@ -86,7 +89,7 @@ void Boss::ShootAtPlayer(float deltaTime)
 	{
 		Vector2 vectorToPlayer = mPlayer->GetPosition() - mPosition;
 		vectorToPlayer.Normalize();
-		mBulletPool->GetBullet()->Shoot(mPosition, vectorToPlayer);
+		ShootFromBodyCenter(vectorToPlayer);
 		mFireTimer = BOSS_FIRE_RATE;
 	}
 }
@@ -102,7 +105,7 @@ void Boss::Spiral(float deltaTime)
 	{
 		for (auto& dir : mShootDirections)
 		{
-			mBulletPool->GetBullet()->Shoot(mPosition, *dir);
+			ShootFromBodyCenter(*dir);
 		}
 		mFireTimer = BOSS_FIRE_RATE;
 	}
@@ -125,4 +128,12 @@ void Boss::MoveTowardPlayer(float deltaTime)
 	mPosition += mVelocity * deltaTime;
 	mCollider.x = static_cast<int>(mPosition.x);
 	mCollider.y = static_cast<int>(mPosition.y);
+}
+
+void Boss::ShootFromBodyCenter(Vector2 direction)
+{
+	float textureWidth = GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetWidth();
+	float textureHeight = GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetHeight();
+	Vector2 centreOfBody(mPosition.x + textureWidth / 2, mPosition.y + textureHeight / 2);
+	mBulletPool->GetBullet()->Shoot(centreOfBody, direction);
 }
