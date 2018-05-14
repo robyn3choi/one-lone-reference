@@ -30,3 +30,18 @@ Bullet* BulletPool::GetBullet()
 	return nullptr;
 }
 
+void BulletPool::ReturnBullet(Bullet* bullet)
+{
+	bullet->SetActive(false);
+}
+
+void BulletPool::Reset()
+{
+	for (size_t i = 0; i < mPool.size(); i++)
+	{
+		mPool[i]->SetActive(false);
+	}
+}
+
+
+

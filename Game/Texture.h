@@ -11,9 +11,6 @@ public:
 	//Loads image at specified path
 	bool LoadFromFile(std::string path);
 
-	//Creates image from font string 
-	bool LoadFromRenderedText(TTF_Font* font, std::string textureText, SDL_Color textColor );
-
 	//Deallocates texture
 	void Free();
 
@@ -32,6 +29,9 @@ public:
 	//Gets image dimensions
 	int GetWidth();
 	int GetHeight();
+
+	void SetWidth(int width);
+	void SetHeight(int height);
 
 private:
 	SDL_Renderer*& mRenderer;

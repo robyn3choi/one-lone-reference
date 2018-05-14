@@ -52,4 +52,5 @@ void EnemySpawner::Reset()
 	{
 		enemy->Reset();
 	}
+	mEnemyIndex = 0;
 }

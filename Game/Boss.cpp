@@ -12,9 +12,9 @@ Boss::Boss(TextureType textureType, Player* player, BulletPool* bulletPool) :
 	float rotation = 45;
 	for (int i = 0; i < 8; i++)
 	{
-		auto v = std::make_unique<Vector2>(0, 1);
+		Vector2* v = new Vector2(0, 1);
 		v->RotateCounterClockwise(rotation * i);
-		mShootDirections.push_back(std::move(v));
+		mShootDirections.push_back(v);
 	}
 }
 
@@ -25,6 +25,11 @@ Boss::~Boss()
 
 void Boss::Update(float deltaTime)
 {
+	if (mHealth <= 0)
+	{
+		return;
+	}
+
 	if (mIsAttacking)
 	{
 		mAttackTimer -= deltaTime;
@@ -77,8 +82,19 @@ void Boss::TakeDamage()
 {
 	if (--mHealth <= 0)
 	{
-		SetActive(false);
 		GameManager::Instance().Win();
+	}
+}
+
+TextureType Boss::GetTextureType() const
+{
+	if (mHealth > 0)
+	{
+		return mTextureType;
+	}
+	else
+	{
+		return TextureType::DeadBoss;
 	}
 }
 
@@ -132,8 +148,8 @@ void Boss::MoveTowardPlayer(float deltaTime)
 
 void Boss::ShootFromBodyCenter(Vector2 direction)
 {
-	float textureWidth = GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetWidth();
-	float textureHeight = GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetHeight();
+	float textureWidth = static_cast<float>(GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetWidth());
+	float textureHeight = static_cast<float>(GameManager::Instance().GetTextureManager()->GetTexture(mTextureType)->GetHeight());
 	Vector2 centreOfBody(mPosition.x + textureWidth / 2, mPosition.y + textureHeight / 2);
 	mBulletPool->GetBullet()->Shoot(centreOfBody, direction);
 }

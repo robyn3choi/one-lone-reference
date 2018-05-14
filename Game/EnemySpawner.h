@@ -12,7 +12,7 @@ public:
 	static Uint32 SpawnEnemyCallback(Uint32 interval, void* param);
 	void SpawnEnemy();
 	void SpawnEnemyWave();
-	bool AreThereEnemiesLeft() const { return (mEnemyIndex < mEnemies.size()); }
+	bool AreThereEnemiesLeft() const { return (mEnemyIndex < static_cast<float>(mEnemies.size())); }
 	void Reset();
 
 private:

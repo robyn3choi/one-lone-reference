@@ -180,12 +180,14 @@
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="CollisionHandler.cpp" />
+    <ClCompile Include="DialogBoxHandler.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
-    <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="BulletPool.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Precompiled.cpp">
@@ -201,14 +203,16 @@
   <ItemGroup>
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="CollisionHandler.h" />
+    <ClInclude Include="DialogBoxHandler.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Exceptions.h" />
-    <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="BulletPool.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Precompiled.h" />
     <ClInclude Include="SDLDeleters.h" />

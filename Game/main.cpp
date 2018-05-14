@@ -1,7 +1,3 @@
-#include "Precompiled.h"
-#include "GameManager.h"
-#include <iostream>
-#include <string>
 
 int main(int argc, char* argv[])
 {
@@ -9,7 +5,7 @@ int main(int argc, char* argv[])
 	{
 		GameManager::Instance().Initialize();
 	}
-	catch (std::exception e)
+	catch (std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
 		return EXIT_FAILURE;

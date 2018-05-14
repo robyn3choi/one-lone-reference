@@ -11,6 +11,8 @@ public:
 	virtual void Reset() override;
 	int GetHealth() { return mHealth; }
 	void TakeDamage();
+	bool IsDead() { return mHealth <= 0; }
+	virtual TextureType GetTextureType() const override;
 
 private:
 	void ShootAtPlayer(float deltaTime);
@@ -29,7 +31,7 @@ private:
 	float mPauseTimer = BOSS_PAUSE_DURATION;
 	AttackPattern mCurrentAttackPattern = AttackPattern::Spiral;
 	BulletPool* mBulletPool = nullptr;
-	std::vector<std::unique_ptr<Vector2>> mShootDirections;
+	std::vector<Vector2*> mShootDirections;
 	Player* mPlayer = nullptr;
 	bool mIsAttacking = false;
 };

@@ -1,7 +1,8 @@
 #include "Player.h"
 
-Player::Player(TextureType textureType) :
-	GameObject(textureType)
+Player::Player(TextureType textureType, BulletPool* bulletPool) :
+	GameObject(textureType),
+	mBulletPool(bulletPool)
 {
 }
 
@@ -26,7 +27,6 @@ void Player::Update(float deltaTime)
 		}
 	}
 
-	// TODO: refactor?
 	Texture* tex = GameManager::Instance().GetTextureManager()->GetTexture(TextureType::Player);
 	float texWidth = static_cast<float>(tex->GetWidth());
 	float texHeight = static_cast<float>(tex->GetHeight());
@@ -46,7 +46,7 @@ void Player::Update(float deltaTime)
 	}
 }
 
-void Player::Move(Vector2 dir)
+void Player::SetMoveDirection(Vector2 dir)
 {
 	if (!mIsDashing)
 	{
@@ -62,6 +62,11 @@ void Player::TakeDamage()
 	}
 }
 
+void Player::Shoot(Vector2 dir)
+{
+	mBulletPool->GetBullet()->Shoot(mPosition, dir);
+}
+
 void Player::Dash(Vector2 dir)
 {
 	mIsDashing = true;
@@ -72,4 +77,16 @@ void Player::Dash(Vector2 dir)
 void Player::Reset()
 {
 	mHealth = PLAYER_HEALTH;
+}
+
+TextureType Player::GetTextureType() const
+{
+	if (GameManager::Instance().HasWon())
+	{
+		return TextureType::CryingPlayer;
+	}
+	else
+	{
+		return mTextureType;
+	}
 }

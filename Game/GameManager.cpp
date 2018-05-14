@@ -1,14 +1,12 @@
 #include "GameManager.h"
 #include "Bullet.h"
-#include "BulletPool.h"
-#include "Exceptions.h"
-#include "GameLoop.h"
+#include "InputHandler.h"
+#include "CollisionHandler.h"
 #include <time.h>
 
 GameManager::GameManager()
 {
 }
-
 
 GameManager::~GameManager()
 {
@@ -21,7 +19,7 @@ bool GameManager::Initialize()
 	CreateRenderer();
 	InitializeSDLImage();
 
-	//SDL_SetRelativeMouseMode(SDL_TRUE);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 	srand(static_cast<int>(time(NULL)));
 	mTextureManager = std::make_unique<TextureManager>(mRenderer.get());
 	mCamera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -72,10 +70,10 @@ void GameManager::InitializeSDLImage()
 
 void GameManager::CreateGameObjects()
 {
-	mPlayer = std::make_unique<Player>(TextureType::Player);
-
 	mPlayerBulletPool = std::make_unique<BulletPool>(PLAYER_BULLET_POOL_SIZE, TextureType::PlayerBullet, PLAYER_BULLET_SPEED, false);
 	mEnemyBulletPool = std::make_unique<BulletPool>(ENEMY_BULLET_POOL_SIZE,  TextureType::EnemyBullet, ENEMY_BULLET_SPEED, true);
+
+	mPlayer = std::make_unique<Player>(TextureType::Player, mPlayerBulletPool.get());
 
 	for (int i = 0; i < NUM_ENEMIES; i++)
 	{
@@ -90,7 +88,6 @@ void GameManager::CreateGameObjects()
 	mBoss->SetActive(false);
 
 	// put all gameObjects into mGameObjects
-
 	decltype(auto) playerBulletPool = mPlayerBulletPool->GetPool();
 	for (auto& bullet : playerBulletPool)
 	{
@@ -127,43 +124,24 @@ void GameManager::Close()
 }
 
 
-
 void GameManager::Run()
 {
 	float timeAtPreviousFrame = 0;
-
 	mIsGameRunning = true;
-
-	//Event handler
-	SDL_Event e;
+	InputHandler inputHandler;
+	CollisionHandler collisionHandler;
+	DialogBoxHandler dialogBoxHandler;
 
 	SetToInitialState();
 
 	while (mIsGameRunning)
 	{
-		HandleInput(e);
+		inputHandler.HandleInput();
 
-		CenterCameraOverPlayer();
+		collisionHandler.HandleCollisions(mEnemyBulletPool.get(), mPlayerBulletPool.get(), &mEnemies, mPlayer.get(), mBoss.get());
 
-		CheckCollisions();
-
-		SDL_RenderClear(mRenderer.get());
-
-		RenderTiledGround();
-
-		float deltaTime = GetDeltaTime(timeAtPreviousFrame);
-		UpdateAndRenderGameObjects(deltaTime);
-
-		if (mIsGameOver)
-		{
-			RenderGameOverUI();
-		}
-
-		mTextureManager->GetTexture(TextureType::Crosshair)->Render(static_cast<int>(m_CursorPos.x), static_cast<int>(m_CursorPos.y));
-
-		RenderHearts();
-
-		SDL_RenderPresent(mRenderer.get());
+		Vector2 cursorPos = inputHandler.GetCursorPosition();
+		UpdateAndRender(timeAtPreviousFrame, cursorPos, dialogBoxHandler);
 	}
 
 	Close();
@@ -174,6 +152,8 @@ void GameManager::SetToInitialState()
 	Vector2 initialPos(LEVEL_WIDTH/2, LEVEL_HEIGHT/2);
 	mPlayer->SetPosition(initialPos);
 	mBoss->SetPosition(INITIAL_BOSS_POSITION);
+	mEnemyBulletPool->Reset();
+	mPlayerBulletPool->Reset();
 
 	if (!mHasReachedBoss)
 	{
@@ -187,6 +167,35 @@ void GameManager::CenterCameraOverPlayer()
 	int playerHeight = mTextureManager->GetTexture(TextureType::Player)->GetHeight();
 	mCamera.x = (static_cast<int>(mPlayer->GetPosition().x) + playerWidth / 2) - SCREEN_WIDTH / 2;
 	mCamera.y = (static_cast<int>(mPlayer->GetPosition().y) + playerHeight / 2) - SCREEN_HEIGHT / 2;
+}
+
+void GameManager::UpdateAndRender(float& timeAtPreviousFrame, Vector2& cursorPos, DialogBoxHandler& dialogBoxHandler)
+{
+	CenterCameraOverPlayer();
+
+	SDL_RenderClear(mRenderer.get());
+
+	RenderTiledGround();
+
+	float deltaTime = GetDeltaTime(timeAtPreviousFrame);
+	UpdateAndRenderGameObjects(deltaTime);
+
+	if (mIsGameOver)
+	{
+		RenderGameOverUI();
+	}
+
+	mTextureManager->GetTexture(TextureType::Crosshair)->Render(static_cast<int>(cursorPos.x), static_cast<int>(cursorPos.y));
+
+	RenderPlayerHealth();
+
+	if (mHasReachedBoss)
+	{
+		RenderBossHealth();
+		dialogBoxHandler.RunDialogBoxSequence(deltaTime);
+	}
+
+	SDL_RenderPresent(mRenderer.get());
 }
 
 void GameManager::RenderTiledGround()
@@ -225,14 +234,13 @@ void GameManager::UpdateAndRenderGameObjects(float deltaTime)
 void GameManager::RenderGameOverUI()
 {
 	Texture* gameOverText = mTextureManager->GetTexture(TextureType::GameOverText);
-	gameOverText->Render(SCREEN_WIDTH / 2 - gameOverText->GetWidth() / 2, 200);
+	gameOverText->Render(SCREEN_WIDTH / 2 - gameOverText->GetWidth() / 2, GAME_OVER_TEXT_Y);
 
-	// TODO: REFACTOR
 	Texture* tryAgainBtn = mTextureManager->GetTexture(TextureType::TryAgainButton);
-	tryAgainBtn->Render(SCREEN_WIDTH / 2 - tryAgainBtn->GetWidth() / 2, 700);
+	tryAgainBtn->Render(SCREEN_WIDTH / 2 - tryAgainBtn->GetWidth() / 2, TRY_AGAIN_BUTTON_Y);
 }
 
-void GameManager::RenderHearts()
+void GameManager::RenderPlayerHealth()
 {
 	Texture* heart = mTextureManager->GetTexture(TextureType::Heart);
 	int currentHealth = mPlayer->GetHealth();
@@ -249,6 +257,22 @@ void GameManager::RenderHearts()
 	{
 		heart->Render(190, 50);
 	}
+}
+
+void GameManager::RenderBossHealth()
+{
+	Texture* healthBarBackground = mTextureManager->GetTexture(TextureType::BossHealthBackground);
+	healthBarBackground->SetWidth(BOSS_HEALTH_BAR_WIDTH);
+	healthBarBackground->SetHeight(BOSS_HEALTH_BAR_HEIGHT);
+	healthBarBackground->Render(SCREEN_WIDTH / 2 - BOSS_HEALTH_BAR_WIDTH / 2, BOSS_HEALTH_BAR_Y);
+
+	int currentHealth = mBoss->GetHealth();
+	float percentage = static_cast<float>(currentHealth) / static_cast<float>(BOSS_HEALTH);
+
+	Texture* healthBarFill = mTextureManager->GetTexture(TextureType::BossHealthFill);
+	healthBarFill->SetWidth(percentage * static_cast<float>(BOSS_HEALTH_BAR_WIDTH));
+	healthBarFill->SetHeight(BOSS_HEALTH_BAR_HEIGHT);
+	healthBarFill->Render(SCREEN_WIDTH / 2 - BOSS_HEALTH_BAR_WIDTH / 2, BOSS_HEALTH_BAR_Y);
 }
 
 void GameManager::HandleEnemyDeath()
@@ -297,153 +321,10 @@ void GameManager::Restart()
 
 void GameManager::Win()
 {
+	mHasWon = true;
 }
 
-void GameManager::HandleInput(SDL_Event& e)
+void GameManager::StopRunning()
 {
-	Vector2 moveDir(0, 0);
-	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-	if (currentKeyStates[SDL_SCANCODE_W])
-	{
-		moveDir += Vector2(0, -1);
-	}
-	else if (currentKeyStates[SDL_SCANCODE_S])
-	{
-		moveDir += Vector2(0, 1);
-	}
-	if (currentKeyStates[SDL_SCANCODE_A])
-	{
-		moveDir += Vector2(-1, 0);
-	}
-	else if (currentKeyStates[SDL_SCANCODE_D])
-	{
-		moveDir += Vector2(1, 0);
-	}
-
-	mPlayer->Move(moveDir);
-
-	int mouseX;
-	int mouseY;
-	SDL_GetMouseState(&mouseX, &mouseY);
-	Vector2 mousePos(static_cast<float>(mouseX), static_cast<float>(mouseY));
-	Vector2 mouseDir(mousePos - Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
-	mouseDir.Normalize();
-	
-	m_CursorPos = mousePos; // + mouseDir * CURSOR_RADIUS;
-
-	//Handle events on queue
-	while (SDL_PollEvent(&e) != 0)
-	{
-		if (e.type == SDL_QUIT)
-		{
-			mIsGameRunning = false;
-		}
-		
-		if (e.type == SDL_MOUSEBUTTONDOWN) 
-		{
-			if (e.button.button == SDL_BUTTON_LEFT)
-			{
-				// shoot
-				mPlayerBulletPool->GetBullet()->Shoot(mPlayer->GetPosition(), mouseDir);
-			}
-			if (e.button.button == SDL_BUTTON_RIGHT)
-			{
-				//dash
-				if (mPlayer->IsDashing())
-				{
-					return;
-				}
-				if (moveDir.GetLength() == 0)
-				{
-					mPlayer->Dash(mouseDir);
-				}
-				else
-				{
-					mPlayer->Dash(moveDir);
-				}
-			}
-		}
-
-		if (mIsGameOver)
-		{
-			if (e.type == SDL_MOUSEBUTTONUP)
-			{
-				if (e.button.button == SDL_BUTTON_LEFT)
-				{
-					Texture* tryAgainBtn = mTextureManager->GetTexture(TextureType::TryAgainButton);
-					int tryAgainBtnX = SCREEN_WIDTH / 2 - tryAgainBtn->GetWidth() / 2;
-					int tryAgainBtnY = 700;
-					//If the mouse is over the button 
-					if ((mouseX > tryAgainBtnX) &&
-						(mouseX <tryAgainBtnX + tryAgainBtn->GetWidth()) &&
-						(mouseY > tryAgainBtnY) &&
-						(mouseY < tryAgainBtnY + tryAgainBtn->GetHeight()))
-					{
-						//Set the button sprite 
-						Restart();
-					}
-				}
-			}
-		}
-		
-	}
-}
-
-void GameManager::CheckCollisions()
-{
-	// check if player has been hit by enemy bullets 
-	for (auto &bullet : mEnemyBulletPool->GetPool())
-	{
-		if (!bullet->IsActive())
-		{
-			continue;
-		}
-		SDL_Rect playerCollider = mPlayer->GetCollider();
-		SDL_Rect bulletCollider = bullet->GetCollider();
-		if (SDL_HasIntersection(&playerCollider, &bulletCollider))
-		{
-			if (!mPlayer->IsDashing())
-			{
-				mPlayer->TakeDamage();
-				bullet->SetActive(false);
-			}
-		}
-	}
-
-	for (auto &bullet : mPlayerBulletPool->GetPool())
-	{
-		if (!bullet->IsActive())
-		{
-			continue;
-		}
-		if (mHasReachedBoss)
-		{
-			// check if boss has been hit by player bullets
-			SDL_Rect bossCollider = mBoss->GetCollider();
-			SDL_Rect bulletCollider = bullet->GetCollider();
-			if (SDL_HasIntersection(&bossCollider, &bulletCollider))
-			{
-				mBoss->TakeDamage();
-				bullet->SetActive(false);
-			}
-		}
-		else
-		{
-			// check if enemies have been hit by player bullets
-			for (auto& enemy : mEnemies)
-			{
-				if (!enemy->IsActive())
-				{
-					continue;
-				}
-				SDL_Rect enemyCollider = enemy->GetCollider();
-				SDL_Rect bulletCollider = bullet->GetCollider();
-				if (SDL_HasIntersection(&enemyCollider, &bulletCollider))
-				{
-					enemy->TakeDamage();
-					bullet->SetActive(false);
-				}
-			}
-		}
-	}
+	mIsGameRunning = false;
 }

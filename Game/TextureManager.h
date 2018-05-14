@@ -16,8 +16,15 @@ enum class TextureType
 	TryAgainButton,
 	Heart,
 	Boss,
+	BossHealthFill,
+	BossHealthBackground,
+	BossText1,
+	BossText2,
+	PlayerText1,
+	PlayerText2,
 	DeadBoss,
 	CryingPlayer
+
 };
 
 enum class TTFTextureType

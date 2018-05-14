@@ -7,6 +7,7 @@
 #include "Boss.h"
 #include "Player.h"
 #include "EnemySpawner.h"
+#include "DialogBoxHandler.h"
 #include "SDLDeleters.h"
 
 class GameManager
@@ -33,20 +34,24 @@ public:
 	void HandlePlayerDeath();
 	void Restart();
 	void Win();
+	void StopRunning();
+	Player* const GetPlayer() const { return mPlayer.get(); }
 	TextureManager* const GetTextureManager() const { return mTextureManager.get(); }
 	SDL_Renderer* const GetRenderer() const { return mRenderer.get(); }
+	bool HasReachedBoss() const { return mHasReachedBoss; }
 	bool IsGameOver() const { return mIsGameOver; }
+	bool HasWon() const { return mHasWon; }
 
 private:
 	GameManager();
-	void HandleInput(SDL_Event& e);
-	void CheckCollisions();
+	void UpdateAndRender(float& timeAtPreviousFrame, Vector2& cursorPos, DialogBoxHandler& dialogBoxHandler);
 	void CenterCameraOverPlayer();
 	void RenderTiledGround();
 	float GetDeltaTime(float& timeAtPreviousFrame);
 	void UpdateAndRenderGameObjects(float deltaTime);
 	void RenderGameOverUI();
-	void RenderHearts();
+	void RenderPlayerHealth();
+	void RenderBossHealth();
 	void SetToInitialState();
 	void SpawnBoss();
 
@@ -66,6 +71,6 @@ private:
 	bool mIsGameRunning = false;
 	bool mIsGameOver = false;
 	bool mHasReachedBoss = false;
-	Vector2 m_CursorPos;
+	bool mHasWon = false;
 };
 

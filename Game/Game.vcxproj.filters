@@ -15,8 +15,10 @@
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
-    <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="CollisionHandler.cpp" />
+    <ClCompile Include="DialogBoxHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Precompiled">
@@ -39,8 +41,10 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="Exceptions.h" />
-    <ClInclude Include="SDLDeleters.h" />
-    <ClInclude Include="GameLoop.h" />
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="CollisionHandler.h" />
+    <ClInclude Include="DialogBoxHandler.h" />
+    <ClInclude Include="SDLDeleters.h" />
   </ItemGroup>
 </Project>

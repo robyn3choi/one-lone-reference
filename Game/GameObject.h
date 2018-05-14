@@ -9,6 +9,7 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 	virtual void Reset() = 0;
+	virtual TextureType GetTextureType() const { return mTextureType; }
 	void SetActive(bool active) { mIsActive = active; }
 	bool IsActive() const { return mIsActive; }
 	const Vector2& GetPosition() const { return mPosition; }
@@ -16,7 +17,6 @@ public:
 	void SetPosition(Vector2 position);
 	void SetVelocity(Vector2& velocity) { mVelocity = velocity; }
 	const SDL_Rect GetCollider() const { return mCollider; }
-	TextureType GetTextureType() const { return mTextureType; }
 	
 protected:
 	SDL_Rect mCollider;

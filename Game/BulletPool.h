@@ -9,7 +9,9 @@ public:
 	~BulletPool();
 
 	Bullet* GetBullet();
+	void ReturnBullet(Bullet* bullet);
 	const std::vector<std::unique_ptr<Bullet>>& GetPool() const { return mPool; }
+	void Reset();
 
 private:
 	std::vector<std::unique_ptr<Bullet>> mPool;

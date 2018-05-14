@@ -5,7 +5,6 @@ TextureManager::TextureManager(SDL_Renderer* renderer) :
 	mRenderer(renderer)
 {
 	LoadTextures();
-	LoadTTFTextures();
 }
 
 
@@ -32,8 +31,14 @@ void TextureManager::LoadTextures()
 		"Images/TryAgainButton.png",
 		"Images/heart.png",
 		"Images/boss.png",
-		"Images/deadBoss.png",
-		"Images/cryingReference.png",
+		"Images/healthBarFill.png",
+		"Images/healthBarBackground.png",
+		"Images/Text/bossText1.png",
+		"Images/Text/bossText2.png",
+		"Images/Text/refText1.png",
+		"Images/Text/refText2.png",
+		"Images/deadBossPointer.png",
+		"Images/cryingReference.png"
 	};
 
 	for (size_t i = 0; i < mPaths.size(); i++)
@@ -42,18 +47,4 @@ void TextureManager::LoadTextures()
 		t->LoadFromFile(mPaths[i]);
 		mTextures.push_back(t);
 	}
-}
-
-void TextureManager::LoadTTFTextures()
-{
-	//std::vector<std::string> textArray = {
-	//	"Game Over",
-	//	"Try Again"
-	//};
-
-	//TTF_Font* font = TTF_OpenFont("Fonts/manaspc.ttf", 28);
-
-	//Texture* gameOverText = new Texture(mRenderer);
-	//gameOverText->LoadFromRenderedText(font, "Game Over", { 255,255,255 });
-
 }
